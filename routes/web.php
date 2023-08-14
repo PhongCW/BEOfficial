@@ -26,3 +26,9 @@ Route::post("/Delete", "App\Http\Controllers\StaffController@Delete");
 Route::post("/Staff_Create", "App\Http\Controllers\StaffController@Staff_Create");
 
 Route::post("Staff_Detail_Edit", "App\Http\Controllers\StaffController@Staff_Detail_Edit");
+
+Route::get('/Show_order_list', 'App\Http\Controllers\ProjectController@Show_order_list');
+
+Route::post('/Delete_order', 'App\Http\Controllers\ProjectController@Delete_order');
+
+Route::post("/Order_Create", "App\Http\Controllers\ProjectController@Order_Create");

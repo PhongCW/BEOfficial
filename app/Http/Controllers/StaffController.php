@@ -30,7 +30,7 @@ class StaffController extends Controller
             $Staff->update([
                 'del_flg' => 1,
                 'updated_user'=> $ID_Login,
-                'updated_datetime'=> now(),
+                'updated_datetime'=> now()->setTimezone("Asia/Ho_Chi_Minh"),
             ]);
         }
     }
@@ -70,9 +70,9 @@ class StaffController extends Controller
                 $StaffModel['staff_type'] = 0;
                 $StaffModel['del_flg'] = 0;
                 $StaffModel['created_user'] = $IDLoginUser;
-                $StaffModel['created_datetime'] = now();
+                $StaffModel['created_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
                 $StaffModel['updated_user'] = $IDLoginUser;
-                $StaffModel['updated_datetime'] = now();
+                $StaffModel['updated_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
 
                 $StaffModel -> save();
                 return "New Staff is created";
@@ -88,9 +88,9 @@ class StaffController extends Controller
                 $StaffModel['staff_type'] = 0;
                 $StaffModel['del_flg'] = 0;
                 $StaffModel['created_user'] = $IDLoginUser;
-                $StaffModel['created_datetime'] = now();
+                $StaffModel['created_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
                 $StaffModel['updated_user'] = $IDLoginUser;
-                $StaffModel['updated_datetime'] = now();
+                $StaffModel['updated_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
 
                 $StaffModel -> save();
                 return "New Staff is created";
@@ -106,9 +106,9 @@ class StaffController extends Controller
                 $StaffModel['staff_type'] = 0;
                 $StaffModel['del_flg'] = 0;
                 $StaffModel['created_user'] = $IDLoginUser;
-                $StaffModel['created_datetime'] = now();
+                $StaffModel['created_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
                 $StaffModel['updated_user'] = $IDLoginUser;
-                $StaffModel['updated_datetime'] = now();
+                $StaffModel['updated_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
 
                 $StaffModel -> save();
                 return "New Staff is created";
@@ -136,7 +136,7 @@ class StaffController extends Controller
             $Staff_Edit_Data = $Staff_Edit->getData();
             $Staff = new Staff;
 
-            $IDLoginUser = $request['IDLoginUser'];
+            $IDLoginUser = $request['   '];
             $ID_Staff_Edit = $request['ID_Staff_Edit'];
             $Condition_verify = $request['Condition_verify'];
             $Condition_menu = $request['Condition_menu'];
@@ -153,7 +153,7 @@ class StaffController extends Controller
                     'staff_type' => 0,
                     'del_flg' => 0,
                     'updated_user' => $IDLoginUser,
-                    'updated_datetime' => now(),
+                    'updated_datetime' => now()->setTimezone("Asia/Ho_Chi_Minh"),
                 ]);
                 return "Staff is edited";
             }
@@ -168,7 +168,7 @@ class StaffController extends Controller
                     'staff_type' => 0,
                     'del_flg' => 0,
                     'updated_user' => $IDLoginUser,
-                    'updated_datetime'=> now(),
+                    'updated_datetime'=> now()->setTimezone("Asia/Ho_Chi_Minh"),
                 ]);
                 return "Staff is edited";
             }
@@ -183,7 +183,7 @@ class StaffController extends Controller
                     'staff_type' => 0,
                     'del_flg' => 0,
                     'updated_user' => $IDLoginUser,
-                    'updated_datetime' => now(),
+                    'updated_datetime' => now()->setTimezone("Asia/Ho_Chi_Minh"),
                 ]);
                 return "Staff is edited";
             }
