@@ -60,14 +60,9 @@ class StaffController extends Controller
         }
         else{
             $IDLoginUser = $request['IDLoginUser'];
-            $Condtion_verify = $request['Condtion_verify'];
-            $Condition_menu = $request['Condition_menu'];
-            $Condition_Staff_List = $request['Condition_Staff_List'];
-
             $Data = $Staff_Create->getData();
 
-            if($Condtion_verify == true){
-                $StaffModel = new StaffModel;
+            $StaffModel = new StaffModel;
 
                 $StaffModel['last_name'] = $Data['last_name'];
                 $StaffModel['first_name'] = $Data['first_name'];
@@ -83,43 +78,6 @@ class StaffController extends Controller
 
                 $StaffModel -> save();
                 return "New Staff is created";
-            }
-            if($Condition_menu == true){
-                $StaffModel = new StaffModel;
-
-                $StaffModel['last_name'] = $Data['last_name'];
-                $StaffModel['first_name'] = $Data['first_name'];
-                $StaffModel['last_name_furigana'] = $Data['last_name_furigana'];
-                $StaffModel['first_name_furigana'] = $Data['first_name_furigana'];
-                $StaffModel['office'] = $Data['office'];
-                $StaffModel['staff_type'] = 0;
-                $StaffModel['del_flg'] = 0;
-                $StaffModel['created_user'] = $IDLoginUser;
-                $StaffModel['created_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
-                $StaffModel['updated_user'] = $IDLoginUser;
-                $StaffModel['updated_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
-
-                $StaffModel -> save();
-                return "New Staff is created";
-            }
-            if($Condition_Staff_List == true){
-                $StaffModel = new StaffModel;
-
-                $StaffModel['last_name'] = $Data['last_name'];
-                $StaffModel['first_name'] = $Data['first_name'];
-                $StaffModel['last_name_furigana'] = $Data['last_name_furigana'];
-                $StaffModel['first_name_furigana'] = $Data['first_name_furigana'];
-                $StaffModel['office'] = $Data['office'];
-                $StaffModel['staff_type'] = 0;
-                $StaffModel['del_flg'] = 0;
-                $StaffModel['created_user'] = $IDLoginUser;
-                $StaffModel['created_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
-                $StaffModel['updated_user'] = $IDLoginUser;
-                $StaffModel['updated_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
-
-                $StaffModel -> save();
-                return "New Staff is created";
-            }
         } 
     }
     function Staff_Detail_Edit(Request $request){
@@ -159,6 +117,61 @@ class StaffController extends Controller
                 'updated_datetime' => now()->setTimezone("Asia/Ho_Chi_Minh"),
             ]);
             return "Staff is edited";
+        }
+    }
+    function HandleSearchStaff(Request $request){
+        $Group = [];
+        $GroupRightHalf = [];
+        $GroupLeftHalf = [];
+        $ModelStaff1 = new StaffModel;
+        $ModelStaff1 = $ModelStaff1::all();
+        foreach ($ModelStaff1 as $key) {
+            $last_name = $key['last_name'];
+            $first_name = $key['first_name'];
+            array_push($Group, $last_name.$first_name);
+        }
+        foreach ($ModelStaff1 as $RightHalf) {
+            $last_name_right_half = $RightHalf['last_name'];
+            array_push($GroupRightHalf, $last_name_right_half);
+        }
+        foreach ($ModelStaff1 as $LeftHalf) {
+            $first_name_left_half = $LeftHalf['first_name'];
+            array_push($GroupLeftHalf, $first_name_left_half);
+        }
+        $Validator = Validator::make($request->all(), [
+            "full_name"=>"required|string",
+            "office"=>"required|string",
+        ],[
+            "full_name.required"=>"full name is required",
+            "office.required"=> "office is required",
+        ]);
+        if ($Validator->fails()){
+            return $Validator->errors();
+        }
+        else{
+            $DataFullName = $Validator->getData();
+            $StaffModel = new StaffModel;
+                foreach ($Group as $item) {
+                    if ($DataFullName['full_name'] == $item){
+                        if (substr($item, 0, 2) !== null){
+                            $Last_name = $StaffModel::where("last_name", substr($item, 0, 2))->get();
+                            $First_name = $StaffModel::where("first_name", substr($item, 2))->get();
+    
+                            foreach ($Last_name as $itemLastName) {
+                                foreach ($First_name as $itemFirstName) {
+                                    if ($itemLastName['last_name'] == $itemFirstName['last_name']){
+                                        if($itemLastName['first_name'] == $itemFirstName['first_name']){
+                                            return $itemLastName;
+                                        }
+                                }
+                            }
+                        }
+                    }
+                    else{
+                        return "Nothing in here";
+                    }
+                }
+            }
         }
     }
 }

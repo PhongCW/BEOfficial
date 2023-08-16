@@ -6,6 +6,7 @@ use App\Models\StaffModel;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
 {
@@ -27,39 +28,6 @@ class ProjectController extends Controller
         ]);
          return "Delete Order successfully";
     }
-        
-        // $status_all = ['実行中','非活性','保留','完了','キャンセル '];
-        // $Validator = new Validator;
-        // $Validate = Validator::make($request->all(), [
-        //     'project_name'=>'required',
-        //     'order_number'=>'required',
-        //     'client_name'=>'required',
-        //     'order_date'=>'required',
-        //     'status'=>'required',
-        //     'order_income'=>'required',
-        //     'internal_unit_price'=>'required',
-        //     'IDLoginUser'=>'required',
-        // ]);
-        // if ($Validate -> fails()){
-        //     return $Validate->errors();
-        // }
-        // else{
-        //     $OrderModel = new OrderModel;
-        //     $Valid = $Validate->getData();
-        //     $OrderModel['project_name'] = $Valid['project_name'];
-        //     $OrderModel['order_number'] = $Valid['order_number'];
-        //     $OrderModel['client_name'] = $Valid['client_name'];
-        //     $OrderModel['order_date'] = $Valid['order_date'];
-        //     $OrderModel['order_income'] = $Valid['order_income'];
-        //     $OrderModel['internal_unit_price'] = $Valid['internal_unit_price'];
-        //     $OrderModel['created_user'] = $Valid['IDLoginUser'];
-        //     $OrderModel['status'] = $Valid['status'];
-        //     $OrderModel['created_datetime'] = now();
-        //     $OrderModel['updated_user'] = $Valid['IDLoginUser'];
-        //     $OrderModel['updated_datetime'] = now();
-        //     $OrderModel -> save();
-        //     return "Success";
-        // }
     
     const STATUS_LABELS = [
             0 => '実行中',
@@ -95,18 +63,19 @@ class ProjectController extends Controller
         ]);
     
         $statusName = isset($request->status) ? self::STATUS_LABELS[$request->status] : null;
-        $newProjectId = DB::table('t_projects')->insertGetId([                'project_name' => $request->project_name,
-        'order_number' => $request->order_number,
-        'client_name'  => $request->client_name,
-        'order_date'   => $request->order_date,
-        'status'       => $request->status,
-        'order_income' => $request->order_income,
-        'internal_unit_price' => $request->internal_unit_price,
-        'del_flg' => 0,
-        'created_user' => $request->IDLoginUser,
-        'updated_user'=>$request->IDLoginUser,
-        'created_datetime' => now()->setTimezone('Asia/Ho_Chi_Minh'),
-        'updated_datetime' => now()->setTimezone('Asia/Ho_Chi_Minh'),
+        $newProjectId = DB::table('t_projects')->insertGetId([                
+            'project_name' => $request->project_name,
+            'order_number' => $request->order_number,
+            'client_name'  => $request->client_name,
+            'order_date'   => $request->order_date,
+            'status'       => $request->status,
+            'order_income' => $request->order_income,
+            'internal_unit_price' => $request->internal_unit_price,
+            'del_flg' => 0,
+            'created_user' => $request->IDLoginUser,
+            'updated_user'=>$request->IDLoginUser,
+            'created_datetime' => now()->setTimezone('Asia/Ho_Chi_Minh'),
+            'updated_datetime' => now()->setTimezone('Asia/Ho_Chi_Minh'),
         ]);
         return response()->json([
             'message' => 'New Project ID is successfully inserted!',
@@ -122,51 +91,55 @@ class ProjectController extends Controller
         return $Order;
     }
 
-    // Edit Order đang check
     function Order_Edit_Detail(Request $request){
-        $request->validate([
-            'project_name' => 'required|string',
+        $Order = new Order;
+        $validator = Validator::make($request->all(), [
+            'project_name' => 'required|regex:/^[\p{Han}]{2}$/u',
             'order_number' => 'required|string|max:255',
             'client_name'  => 'required|string|max:255',
             'order_date'   => 'required|date',
             'status'       => 'required|integer|between:0,4',
             'order_income' => 'required|regex:/^[0-9]+$/',
             'internal_unit_price' => 'required|regex:/^[0-9]+$/',
-            'IDLoginUser' => 'required|string',
-            'OrderID' => 'required|string'
+            'OrderID' => 'required|numeric',
+            'IDLoginUser' => 'required|numeric',
         ], [
-            'project_name.required' => 'project name is required',
-            'project_name.regex'    => 'project name need to be string',
-            'order_number.required' => 'project name is required',
-            'client_name.required'  => 'client name is required',
-            'order_date.date'       => 'order date need to be date',
-            'status.required'       => 'status need is required',
-            'order_income.required' => 'order income is required',
-            'order_income.regex'    => 'order income need to be numeric',
-            'internal_unit_price.required' => 'internal unit price is required',
-            'internal_unit_price.regex'    => 'internal unit price need to be numeric',
-            'IDLoginUser.required' => 'IDLoginUser is required',
-            'OrderID.required' => "OrderID is required"
+            'project_name.required' => 'project_name is required',
+            'project_name.regex'    => 'project_name need to be string',
+            'order_number.required' => 'order_number is required',
+            'client_name.required'  => 'client_name is required',
+            'order_date.date'       => 'order_date need to be date',
+            'status.required'       => 'status is required',
+            'order_income.required' => 'order_income is required',
+            'order_income.regex'    => 'order_income need to be numeric',
+            'internal_unit_price.required' => 'internal_unit_price is required',
+            'internal_unit_price.regex'    => 'internal_unit_price need to be numeric',
+            'OrderID.required'=>"OrderID is required",
+            "IDLoginUser.required"=>"IDLoginUser is required"
         ]);
-        $statusName = isset($request->status) ? self::STATUS_LABELS[$request->status] : null;
-        $newProjectId = DB::table('t_projects')->where("id", $request->OrderID)->first()->update([                
-            'project_name' => $request->project_name,
-            'order_number' => $request->order_number,
-            'client_name'  => $request->client_name,
-            'order_date'   => $request->order_date,
-            'status'       => $request->status,
-            'order_income' => $request->order_income,
-            'internal_unit_price' => $request->internal_unit_price,
-            'del_flg' => 0,
-            'updated_user'=>$request->IDLoginUser,
-            'updated_datetime' => now()->setTimezone('Asia/Ho_Chi_Minh'),
-        ]);
-        return response()->json([
-            'message' => 'Project ID is Edited successfully',
-            'project_id' => $newProjectId
-        ], 201);
+        if ($validator->fails()){
+            return $validator->errors();
+        }
+        else{
+
+            $statusName = isset($request->status) ? self::STATUS_LABELS[$request->status] : null;
+            $Order = $Order::where('id', $request->OrderID)->first();
+            $Order->update([
+                'project_name'=>$request->project_name,
+                'order_number'=>$request->order_number,
+                'client_name'=>$request->client_name,
+                'order_date'=>$request->order_date,
+                'status'=>$request->status,  
+                'order_income'=>$request->order_income,
+                'internal_unit_price'=>$request->internal_unit_price,
+                "del_flg"=>0,
+                'updated_user'=>$request->IDLoginUser,
+                'updated_datetime'=>now(),
+            ]);
+            return "Edited Project Successfully";
+        }
     }
-    function Handle(Request $request)
+    function HandleSearchOrder(Request $request)
     {
         $request->validate([
             'order_number' => 'nullable|string|max:255',
