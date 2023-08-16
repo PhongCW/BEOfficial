@@ -44,7 +44,7 @@ class UserController extends Controller
                     } 
                     else {
                         Auth::login($User);
-                        return $UserIDLogin;
+                        return response()->json(["Successfully", $UserIDLogin]);
                     }
                 }
             }

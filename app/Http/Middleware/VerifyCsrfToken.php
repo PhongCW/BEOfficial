@@ -18,6 +18,13 @@ class VerifyCsrfToken extends Middleware
         '/Staff_Detail_Edit',
         '/Show_order_list',
         '/Delete_order',
-        '/Order_Create'
+        '/GetOrderByID',
+        '/Actual_Plan',
+        '/Order_Create',
+        '/HandleSearchOrder',
+        '/Order_Edit_Detail',
+        '/GetStaffID',
+        '/Actual_Plan'
+
     ];
 }

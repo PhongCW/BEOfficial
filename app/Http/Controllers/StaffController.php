@@ -17,6 +17,12 @@ class StaffController extends Controller
         $Staff = $Staff::where("del_flg", 0)->orderBy('created_datetime')->get();
         return $Staff;
     }
+    function GetStaffById(Request $request){
+        $data = $request->all();
+        $id = $data['StaffID'];
+        $Staff = Staff::where("id", $id)->first();
+        return $Staff;
+    }
     function Delete(Request $request){
         $SelectedStaff = $request;
         $SelectedStaffID = $SelectedStaff['id']; //here id staff
@@ -33,6 +39,7 @@ class StaffController extends Controller
                 'updated_datetime'=> now()->setTimezone("Asia/Ho_Chi_Minh"),
             ]);
         }
+        return "Deleted Successfully";
     }
     function Staff_Create(Request $request){
         $Staff_Create = Validator::make($request->all(), [
@@ -136,57 +143,22 @@ class StaffController extends Controller
             $Staff_Edit_Data = $Staff_Edit->getData();
             $Staff = new Staff;
 
-            $IDLoginUser = $request['   '];
+            $IDLoginUser = $request['IDLoginUser'];
             $ID_Staff_Edit = $request['ID_Staff_Edit'];
-            $Condition_verify = $request['Condition_verify'];
-            $Condition_menu = $request['Condition_menu'];
-            $Condition_staff_list = $request['Condition_staff_list'];
 
-            if($Condition_verify == true){
-                $Staff_Find_In_Model = Staff::where("id", $ID_Staff_Edit)->first();
-                $Staff_Find_In_Model->update([
-                    "last_name" => $Staff_Edit_Data['last_name'],
-                    "first_name" => $Staff_Edit_Data['first_name'],
-                    "last_name_furigana" => $Staff_Edit_Data['last_name_furigana'],
-                    "first_name_furigana" => $Staff_Edit_Data['first_name_furigana'],
-                    "office" => $Staff_Edit_Data['office'],
-                    'staff_type' => 0,
-                    'del_flg' => 0,
-                    'updated_user' => $IDLoginUser,
-                    'updated_datetime' => now()->setTimezone("Asia/Ho_Chi_Minh"),
-                ]);
-                return "Staff is edited";
-            }
-            if($Condition_menu == true){
-                $Staff_Find_In_Model = $Staff::where("id", $ID_Staff_Edit)->first();
-                $Staff_Find_In_Model->update([
-                    "last_name" => $Staff_Edit_Data['last_name'],
-                    "first_name" => $Staff_Edit_Data['first_name'],
-                    "last_name_furigana" => $Staff_Edit_Data['last_name_furigana'],
-                    "first_name_furigana" => $Staff_Edit_Data['first_name_furigana'],
-                    "office" => $Staff_Edit_Data['office'],
-                    'staff_type' => 0,
-                    'del_flg' => 0,
-                    'updated_user' => $IDLoginUser,
-                    'updated_datetime'=> now()->setTimezone("Asia/Ho_Chi_Minh"),
-                ]);
-                return "Staff is edited";
-            }
-            if($Condition_staff_list == true){
-                $Staff_Find_In_Model = $Staff::where("id", $ID_Staff_Edit)->first();
-                $Staff_Find_In_Model->update([
-                    "last_name" => $Staff_Edit_Data['last_name'],
-                    "first_name" => $Staff_Edit_Data['first_name'],
-                    "last_name_furigana" => $Staff_Edit_Data['last_name_furigana'],
-                    "first_name_furigana" => $Staff_Edit_Data['first_name_furigana'],
-                    "office" => $Staff_Edit_Data['office'],
-                    'staff_type' => 0,
-                    'del_flg' => 0,
-                    'updated_user' => $IDLoginUser,
-                    'updated_datetime' => now()->setTimezone("Asia/Ho_Chi_Minh"),
-                ]);
-                return "Staff is edited";
-            }
+            $Staff_Find_In_Model = Staff::where("id", $ID_Staff_Edit)->first();
+            $Staff_Find_In_Model->update([
+                "last_name" => $Staff_Edit_Data['last_name'],
+                "first_name" => $Staff_Edit_Data['first_name'],
+                "last_name_furigana" => $Staff_Edit_Data['last_name_furigana'],
+                "first_name_furigana" => $Staff_Edit_Data['first_name_furigana'],
+                "office" => $Staff_Edit_Data['office'],
+                'staff_type' => 0,
+                'del_flg' => 0,
+                'updated_user' => $IDLoginUser,
+                'updated_datetime' => now()->setTimezone("Asia/Ho_Chi_Minh"),
+            ]);
+            return "Staff is edited";
         }
     }
 }

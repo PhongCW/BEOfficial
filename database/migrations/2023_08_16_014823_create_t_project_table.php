@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('t_projects', function (Blueprint $table) {
             $table->id()->nullable()->autoIncrement();
             $table->timestamps();
-            $table->string('project_name', 100);
+            $table->string('project_name', 200);
             $table->string('order_number', 100)->nullable();
             $table->string("client_name", 100);
             $table->dateTime("order_date");
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('t_projects');
+        Schema::dropIfExists('t_project');
     }
 };
