@@ -6,21 +6,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\t_project_model;
 use App\Models\t_project;
+use App\Models\Order;
 
-// HERE FOR HOMEWORK
 class T_project_Controller extends Controller
 {
     function Actual_Plan(Request $request){
-        $Order = $request;
-        $id_from_order_list = $Order['id_order'];
-        $t_project_all = new t_project;
-        $t_project = $t_project_all::where("id", $id_from_order_list)->first();
-        $order_income_all = $t_project_all::where("id", $id_from_order_list)->get("order_income");
-        $order_number = $t_project['order_number'];
-        $client_name = $t_project['client_name'];
-        $order_income = $t_project['order_income'];
-        $project_name = $t_project['project_name'];
-        $order_value = $order_income*0.9;
-        
+        $ID_order = $request['order_id'];
+        $order = new Order;
+        $order = $order::where("id",$ID_order)->first();
+        $order_number = $order['order_number'];
+        $client_name = $order['client_name'];
+        $project_name = $order['project_name'];
+        $internal_unit_price = $order['internal_unit_price'];
+        $order_income_A = $order['order_income'];
+        $order_income_B = $order_income_A*0.9;
+        return $order_income_B;
     }
 }

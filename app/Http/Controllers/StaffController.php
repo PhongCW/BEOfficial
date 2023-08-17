@@ -20,7 +20,8 @@ class StaffController extends Controller
     function GetStaffById(Request $request){
         $data = $request->all();
         $id = $data['StaffID'];
-        $Staff = Staff::where("id", $id)->first();
+        $Staff = new Staff;
+        $Staff = $Staff::where("id", $id)->first();
         return $Staff;
     }
     function Delete(Request $request){
@@ -38,8 +39,8 @@ class StaffController extends Controller
                 'updated_user'=> $ID_Login,
                 'updated_datetime'=> now()->setTimezone("Asia/Ho_Chi_Minh"),
             ]);
+            return "Deleted Successfully";
         }
-        return "Deleted Successfully";
     }
     function Staff_Create(Request $request){
         $Staff_Create = Validator::make($request->all(), [
@@ -47,13 +48,11 @@ class StaffController extends Controller
             'first_name'=>"required|nullable|string|size:2",
             'last_name_furigana'=>'required|nullable|string',
             'first_name_furigana'=>'required|nullable|string',
-            'office' => 'required|nullable',
         ], [
             'last_name.required' => "Last name is required",
             'first_name.required' => "First name is required",
             'last_name_furigana.required'=> "Last name furigana is required",
             "first_name_furigana.required" => "first name furigana is required",
-            'office.required' =>'Office is required!',
         ]);
         if ($Staff_Create->fails()) {
             return $Staff_Create->errors();
@@ -68,7 +67,6 @@ class StaffController extends Controller
                 $StaffModel['first_name'] = $Data['first_name'];
                 $StaffModel['last_name_furigana'] = $Data['last_name_furigana'];
                 $StaffModel['first_name_furigana'] = $Data['first_name_furigana'];
-                $StaffModel['office'] = $Data['office'];
                 $StaffModel['staff_type'] = 0;
                 $StaffModel['del_flg'] = 0;
                 $StaffModel['created_user'] = $IDLoginUser;
@@ -86,13 +84,11 @@ class StaffController extends Controller
             'first_name'=>"required|string|nullable|size:2",
             'last_name_furigana'=>"required|string|nullable",
             'first_name_furigana'=>"required|string|nullable",
-            'office'=>"required|string",
         ],[
             'last_name.required' => "Last name is required",
             'first_name.required' => "First name is required",
             'last_name_furigana.required'=> "Last name furigana is required",
             "first_name_furigana.required" => "first name furigana is required",
-            'office.required' =>'Office is required!',
         ]);
         if ($Staff_Edit->fails()){
             return $Staff_Edit->errors();
@@ -110,7 +106,6 @@ class StaffController extends Controller
                 "first_name" => $Staff_Edit_Data['first_name'],
                 "last_name_furigana" => $Staff_Edit_Data['last_name_furigana'],
                 "first_name_furigana" => $Staff_Edit_Data['first_name_furigana'],
-                "office" => $Staff_Edit_Data['office'],
                 'staff_type' => 0,
                 'del_flg' => 0,
                 'updated_user' => $IDLoginUser,
@@ -153,10 +148,10 @@ class StaffController extends Controller
             $StaffModel = new StaffModel;
                 foreach ($Group as $item) {
                     if ($DataFullName['full_name'] == $item){
-                        if (substr($item, 0, 2) !== null){
-                            $Last_name = $StaffModel::where("last_name", substr($item, 0, 2))->get();
-                            $First_name = $StaffModel::where("first_name", substr($item, 2))->get();
-    
+                        if (substr($item, 0, 2) !== null && substr($item, 2) !== null){
+                            $Last_name = $StaffModel::where("last_name", substr($item, 0, 6))->get();
+                            $First_name = $StaffModel::where("first_name", substr($item, 6))->get();
+                            
                             foreach ($Last_name as $itemLastName) {
                                 foreach ($First_name as $itemFirstName) {
                                     if ($itemLastName['last_name'] == $itemFirstName['last_name']){
@@ -166,9 +161,35 @@ class StaffController extends Controller
                                 }
                             }
                         }
+                        if (substr($item, 0, 2) !== null && substr($item, 2) !== null){
+                            $Last_name = $StaffModel::where("last_name", substr($item, 0, 2))->get();
+                            $First_name = $StaffModel::where("first_name", substr($item, 2))->get();
+                            
+                            foreach ($Last_name as $itemLastName) {
+                                foreach ($First_name as $itemFirstName) {
+                                    if ($itemLastName['last_name'] == $itemFirstName['last_name']){
+                                        if($itemLastName['first_name'] == $itemFirstName['first_name']){
+                                            return $itemLastName;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                     else{
                         return "Nothing in here";
+                    }
+                }
+                foreach ($GroupRightHalf as $RightHalf) {
+                    if($DataFullName['full_name'] == $RightHalf){
+                        $Get = $StaffModel::where("last_name", $DataFullName['full_name'])->get();
+                        return $Get;
+                    }
+                }
+                foreach ($GroupLeftHalf as $LeftHalf) {
+                    if($DataFullName['full_name'] == $LeftHalf){
+                        $GET = $StaffModel::where("first_name", $DataFullName['full_name'])->get();
+                        return $GET;
                     }
                 }
             }
