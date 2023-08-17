@@ -45,7 +45,10 @@ class UserController extends Controller
                     } 
                     else {
                         Auth::login($User);
-                        return response()->json(["Successfully", $UserIDLogin]);
+                        return response()->json([
+                            'message' => 'Successfully',
+                            'IDLoginUser' => $UserIDLogin
+                        ], 200);
                     }
                 }
             }

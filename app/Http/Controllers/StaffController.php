@@ -43,16 +43,21 @@ class StaffController extends Controller
         }
     }
     function Staff_Create(Request $request){
+
+        $StaffTypeArray = ["社員", "パートナー"];
+
         $Staff_Create = Validator::make($request->all(), [
             'last_name'=>"required|nullable|string|size:2",
             'first_name'=>"required|nullable|string|size:2",
             'last_name_furigana'=>'required|nullable|string',
             'first_name_furigana'=>'required|nullable|string',
+            'staff_type'=>'required|string'
         ], [
             'last_name.required' => "Last name is required",
             'first_name.required' => "First name is required",
             'last_name_furigana.required'=> "Last name furigana is required",
             "first_name_furigana.required" => "first name furigana is required",
+            'staff_type.required'=>'staff type is required'
         ]);
         if ($Staff_Create->fails()) {
             return $Staff_Create->errors();
@@ -63,19 +68,25 @@ class StaffController extends Controller
 
             $StaffModel = new StaffModel;
 
-                $StaffModel['last_name'] = $Data['last_name'];
-                $StaffModel['first_name'] = $Data['first_name'];
-                $StaffModel['last_name_furigana'] = $Data['last_name_furigana'];
-                $StaffModel['first_name_furigana'] = $Data['first_name_furigana'];
-                $StaffModel['staff_type'] = 0;
-                $StaffModel['del_flg'] = 0;
-                $StaffModel['created_user'] = $IDLoginUser;
-                $StaffModel['created_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
-                $StaffModel['updated_user'] = $IDLoginUser;
-                $StaffModel['updated_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
+            $StaffModel['last_name'] = $Data['last_name'];
+            $StaffModel['first_name'] = $Data['first_name'];
+            $StaffModel['last_name_furigana'] = $Data['last_name_furigana'];
+            $StaffModel['first_name_furigana'] = $Data['first_name_furigana'];
 
-                $StaffModel -> save();
-                return "New Staff is created";
+            if($Data['staff_type'] == $StaffTypeArray[0]){
+                $StaffModel['staff_type'] = 0;
+            }
+            else{
+                $StaffModel['staff_type'] = 1;
+            }
+            $StaffModel['del_flg'] = 0;
+            $StaffModel['created_user'] = $IDLoginUser;
+            $StaffModel['created_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
+            $StaffModel['updated_user'] = $IDLoginUser;
+            $StaffModel['updated_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
+
+            $StaffModel -> save();
+            return "New Staff is created";
         } 
     }
     function Staff_Detail_Edit(Request $request){

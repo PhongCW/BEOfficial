@@ -8,6 +8,7 @@ use App\Models\Order;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
+
 class ProjectController extends Controller
 {
     function Show_order_list(Request $request){
@@ -139,7 +140,7 @@ class ProjectController extends Controller
             return "Edited Project Successfully";
         }
     }
-    
+
     function HandleSearchOrder(Request $request)
     {
         $request->validate([

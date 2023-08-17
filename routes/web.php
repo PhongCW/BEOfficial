@@ -44,3 +44,7 @@ Route::post('/HandleSearchOrder', 'App\Http\Controllers\ProjectController@Handle
 Route::post('/GetStaffID', 'App\Http\Controllers\StaffController@GetStaffById');
 
 Route::post("/Actual_Plan", 'App\Http\Controllers\T_project_Controller@Actual_Plan');
+
+Route::get("/Get_Staff", 'App\Http\Controllers\T_project_Controller@Get_Staff');
+
+Route::post("/SaveData", 'App\Http\Controllers\T_project_Controller@Register');
