@@ -91,7 +91,7 @@ class T_project_Controller extends Controller
 
             if (count($projectInPlanActuals) > 0) {
                 $results = [
-                    'projectData' => $projectData,  // thêm thông tin project
+                    'projectData' => $projectData,
                     'details' => []  // chi tiết về staff và dữ liệu t_project_plan_actuals
                 ];
 
@@ -108,16 +108,18 @@ class T_project_Controller extends Controller
                     }
                 }
 
-                // show danh sách staff chưa có trong bảng bảng plant
+                // show danh sách staff chưa có trong bảng plant
                 $remainingStaffIds = $allStaffs->pluck('staff_id')->diff($planActualStaffIds);
+
+                $remainingStaffs = [];
                 foreach ($remainingStaffIds as $remainingStaffId) {
                     $staff = $allStaffs->firstWhere('staff_id', $remainingStaffId);
                     if ($staff) {
-                        $results['details'][] = [
-                            'staffData' => $staff
-                        ];
+                        $remainingStaffs[] = $staff;  // thêm vào mảng riêng
                     }
                 }
+
+                $results['remainingStaffs'] = $remainingStaffs;
 
                 return response()->json($results);
             } else {
