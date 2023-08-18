@@ -129,6 +129,7 @@ class StaffController extends Controller
         $Group = [];
         $GroupRightHalf = [];
         $GroupLeftHalf = [];
+        $GroupStaffType = [];
         $ModelStaff1 = new StaffModel;
         $ModelStaff1 = $ModelStaff1::all();
         foreach ($ModelStaff1 as $key) {
@@ -144,12 +145,14 @@ class StaffController extends Controller
             $first_name_left_half = $LeftHalf['first_name'];
             array_push($GroupLeftHalf, $first_name_left_half);
         }
+        foreach ($ModelStaff1 as $StaffType) {
+            $Staff_Type = $StaffType['staff_type'];
+            array_push($GroupStaffType, $Staff_Type);
+        }
         $Validator = Validator::make($request->all(), [
-            "full_name"=>"required|string",
-            "office"=>"required|string",
+            "stafftype"=>"nullable",
+            "full_name"=>"nullable",
         ],[
-            "full_name.required"=>"full name is required",
-            "office.required"=> "office is required",
         ]);
         if ($Validator->fails()){
             return $Validator->errors();
@@ -167,7 +170,14 @@ class StaffController extends Controller
                                 foreach ($First_name as $itemFirstName) {
                                     if ($itemLastName['last_name'] == $itemFirstName['last_name']){
                                         if($itemLastName['first_name'] == $itemFirstName['first_name']){
-                                            return $itemLastName;
+                                            if ($DataFullName['stafftype'] !== null){
+                                                if($itemLastName['staff_type'] == $DataFullName['stafftype']){
+                                                    return $itemLastName;
+                                                }
+                                            }
+                                            if($DataFullName['stafftype'] == null){
+                                                return $itemLastName;
+                                            }
                                         }
                                 }
                             }
@@ -180,15 +190,19 @@ class StaffController extends Controller
                                 foreach ($First_name as $itemFirstName) {
                                     if ($itemLastName['last_name'] == $itemFirstName['last_name']){
                                         if($itemLastName['first_name'] == $itemFirstName['first_name']){
-                                            return $itemLastName;
+                                            if ($DataFullName['stafftype'] !== null){
+                                                if($itemLastName['staff_type'] == $DataFullName['stafftype']){
+                                                    return $itemLastName;
+                                                }
+                                            }
+                                            if($DataFullName['stafftype'] == null){
+                                                return $itemLastName;
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                    else{
-                        return "Nothing in here";
                     }
                 }
                 foreach ($GroupRightHalf as $RightHalf) {

@@ -26,7 +26,8 @@ class VerifyCsrfToken extends Middleware
         '/Order_Edit_Detail',
         '/GetStaffID',
         '/Actual_Plan',
-        '/SaveData',
+        // '/SaveData',
+        '/project-plan-actuals/save'
 
     ];
 }
