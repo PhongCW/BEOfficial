@@ -30,7 +30,7 @@ class StaffController extends Controller
     function Delete(Request $request){
         $SelectedStaff = $request;
         $SelectedStaffID = $SelectedStaff['id']; //here id staff
-        $ID_Login = $SelectedStaff['id_login']; //need IDlogin from user entered
+        $ID_Login = $SelectedStaff['IDLoginUser']; //need IDlogin from user entered
         $SelectedStaff_Condition = $SelectedStaff['Condition']; // when click to verify, send true!
 
         $Staff = new Staff;
@@ -192,7 +192,7 @@ class StaffController extends Controller
                         }
                     }
                     if ($request->name == null && $request->staff_type == null){
-                        $FillterQueryNull = DB::table("m_staffs_data")->where("del_flg", 0)->get();
+                        $FillterQueryNull = DB::table("m_staffs_data")->get();
                         return $FillterQueryNull;
                     }
                 }

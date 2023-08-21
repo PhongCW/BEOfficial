@@ -18,7 +18,7 @@ class ProjectController extends Controller
     }
 
     function Delete_order(Request $request){
-        $Id_User_Login = $request['Id_User_Login'];
+        $Id_User_Login = $request['IDLoginUser'];
         $Id_Order = $request['Id_Order'];
 
         if(isset($Id_User_Login)){
