@@ -83,79 +83,85 @@ class T_project_Controller extends Controller
 
     public function saveProjectPlanActuals(Request $request)
     {
-        
-        try {
-            $validatedData = $request->validate([
-                'project_id' => 'required|integer|exists:t_projects,id',
-                'staff_id' => 'required|array',
-                'staff_id.*' => 'integer|exists:m_staffs_data,id',
-                'this_year_04_plan' => 'nullable|numeric',
-                'this_year_04_actual' => 'nullable|numeric',
-                'this_year_05_plan' => 'nullable|numeric',
-                'this_year_05_actual' => 'nullable|numeric',
-                'this_year_06_plan' => 'nullable|numeric',
-                'this_year_06_actual' => 'nullable|numeric',
-                'this_year_07_plan' => 'nullable|numeric',
-                'this_year_07_actual' => 'nullable|numeric',
-                'this_year_08_plan' => 'nullable|numeric',
-                'this_year_08_actual' => 'nullable|numeric',
-                'this_year_09_plan' => 'nullable|numeric',
-                'this_year_09_actual' => 'nullable|numeric',
-                'this_year_10_plan' => 'nullable|numeric',
-                'this_year_10_actual' => 'nullable|numeric',
-                'this_year_11_plan' => 'nullable|numeric',
-                'this_year_11_actual' => 'nullable|numeric',
-                'this_year_12_plan' => 'nullable|numeric',
-                'this_year_12_actual' => 'nullable|numeric',
-                'nextyear_01_plan' => 'nullable|numeric',
-                'nextyear_01_actual' => 'nullable|numeric',
-                'nextyear_02_plan' => 'nullable|numeric',
-                'nextyear_02_actual' => 'nullable|numeric',
-                'nextyear_03_plan' => 'nullable|numeric',
-                'nextyear_03_actual' => 'nullable|numeric',
-            ]);
+        $IDLoginUser = $request->IDLoginUser;
 
-            $IDLoginUser = $request->IDLoginUser;
-
-        foreach ($validatedData['staff_id'] as $staffId) {
-            $dataToInsertOrUpdate = [
-                'staff_id' => $staffId,
-                'project_id' => $validatedData['project_id'],
-                'updated_user' => $IDLoginUser,
-                'updated_datetime' => now(),
-            ];
-
-            // Kiểm tra và cập nhật dữ liệu
-            $existingRecord = DB::table('t_project_actual')
-                ->where('project_id', $validatedData['project_id'])
-                ->where('staff_id', $staffId)
-                ->first();
-
-            if (!$existingRecord) {
-                $dataToInsertOrUpdate['created_user'] = $IDLoginUser;
-                $dataToInsertOrUpdate['created_datetime'] = now();
-            }
-
-            foreach ($validatedData as $key => $value) {
-                if (!is_null($value) && $key != 'staff_id') {
-                    $dataToInsertOrUpdate[$key] = $value;
-                }
-            }
-
-            if ($existingRecord) {
-                DB::table('t_project_actual')
+        if (isset($IDLoginUser)){
+            try {
+                $validatedData = $request->validate([
+                    'project_id' => 'required|integer|exists:t_projects,id',
+                    'staff_id' => 'required|array',
+                    'staff_id.*' => 'integer|exists:m_staffs_data,id',
+                    'this_year_04_plan' => 'nullable|numeric',
+                    'this_year_04_actual' => 'nullable|numeric',
+                    'this_year_05_plan' => 'nullable|numeric',
+                    'this_year_05_actual' => 'nullable|numeric',
+                    'this_year_06_plan' => 'nullable|numeric',
+                    'this_year_06_actual' => 'nullable|numeric',
+                    'this_year_07_plan' => 'nullable|numeric',
+                    'this_year_07_actual' => 'nullable|numeric',
+                    'this_year_08_plan' => 'nullable|numeric',
+                    'this_year_08_actual' => 'nullable|numeric',
+                    'this_year_09_plan' => 'nullable|numeric',
+                    'this_year_09_actual' => 'nullable|numeric',
+                    'this_year_10_plan' => 'nullable|numeric',
+                    'this_year_10_actual' => 'nullable|numeric',
+                    'this_year_11_plan' => 'nullable|numeric',
+                    'this_year_11_actual' => 'nullable|numeric',
+                    'this_year_12_plan' => 'nullable|numeric',
+                    'this_year_12_actual' => 'nullable|numeric',
+                    'nextyear_01_plan' => 'nullable|numeric',
+                    'nextyear_01_actual' => 'nullable|numeric',
+                    'nextyear_02_plan' => 'nullable|numeric',
+                    'nextyear_02_actual' => 'nullable|numeric',
+                    'nextyear_03_plan' => 'nullable|numeric',
+                    'nextyear_03_actual' => 'nullable|numeric',
+                ]);
+    
+            foreach ($validatedData['staff_id'] as $staffId) {
+                $dataToInsertOrUpdate = [
+                    'staff_id' => $staffId,
+                    'project_id' => $validatedData['project_id'],
+                    'updated_user' => $IDLoginUser,
+                    'updated_datetime' => now(),
+                ];
+    
+                // Kiểm tra và cập nhật dữ liệu
+                $existingRecord = DB::table('t_project_actual')
                     ->where('project_id', $validatedData['project_id'])
                     ->where('staff_id', $staffId)
-                    ->update($dataToInsertOrUpdate);
-            } else {
-                DB::table('t_project_actual')->insert($dataToInsertOrUpdate);
+                    ->first();
+    
+                if (!$existingRecord) {
+                    $dataToInsertOrUpdate['created_user'] = $IDLoginUser;
+                    $dataToInsertOrUpdate['created_datetime'] = now();
+                }
+    
+                foreach ($validatedData as $key => $value) {
+                    if (!is_null($value) && $key != 'staff_id') {
+                        $dataToInsertOrUpdate[$key] = $value;
+                    }
+                }
+    
+                if ($existingRecord) {
+                    DB::table('t_project_actual')
+                        ->where('project_id', $validatedData['project_id'])
+                        ->where('staff_id', $staffId)
+                        ->update($dataToInsertOrUpdate);
+                } else {
+                    DB::table('t_project_actual')->insert($dataToInsertOrUpdate);
+                }
+            }
+    
+                return response()->json(['message' => 'Data saved successfully']);
+            } catch (\Exception $e) {
+                Log::error("Error in PlantController@saveProjectPlanActuals: " . $e->getMessage());
+                return response()->json(['message' => 'Internal Server Error'], 500);
             }
         }
-
-        return response()->json(['message' => 'Data saved successfully']);
-    } catch (\Exception $e) {
-        Log::error("Error in PlantController@saveProjectPlanActuals: " . $e->getMessage());
-        return response()->json(['message' => 'Internal Server Error'], 500);
-    }
+        else{
+            return response()->json([
+                "message"=>"You haven't Login yet"
+            ], 404);
+        }
     }
 }

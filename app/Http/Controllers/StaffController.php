@@ -171,8 +171,14 @@ class StaffController extends Controller
                     }
                     if ($request->name !== null && $request->staff_type !== null){
                         if ($request->name == substr($request->name, 0, 6)){
-                            $query = DB::table("m_staffs_data")->where("last_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
-                            return $query;
+                            $queryLastName = DB::table("m_staffs_data")->where("last_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
+                            $queryFirstName = DB::table("m_staffs_data")->where("first_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
+                            if (count($queryLastName)>0){
+                                return $queryLastName;
+                            }
+                            if (count($queryFirstName)>0){
+                                return $queryFirstName;
+                            }
                         }
                         else{
                             $filterQuery = DB::table("m_staffs_data")
@@ -182,9 +188,15 @@ class StaffController extends Controller
                         }
                     }
                     if ($request->name !== null && $request->staff_type == null){
-                        if ($request->name == substr($request->name, 0, 6)){
-                            $query = DB::table("m_staffs_data")->where("last_name", $request->name)->where("del_flg", 0)->get();
-                            return $query;
+                        if ($request->name == substr($request->name, 0,6)){
+                            $queryLastName = DB::table("m_staffs_data")->where("last_name", $request->name)->where("del_flg", 0)->get();
+                            $queryFirstName = DB::table("m_staffs_data")->where("first_name", $request->name)->where("del_flg", 0)->get();
+                            if (count($queryLastName)>0){
+                                return $queryLastName;
+                            }
+                            if (count($queryFirstName)>0){
+                                return $queryFirstName;
+                            }
                         }
                         else{
                             $FilterQueryStaffTypeNull = DB::table("m_staffs_data")->where(DB::raw("CONCAT(last_name, first_name)"), $request->name)->where("del_flg", 0)->get();
