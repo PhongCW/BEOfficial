@@ -161,42 +161,49 @@ class StaffController extends Controller
 
         $IDLoginUser = $request->IDLoginUser;
 
-        if(isset($IDLoginUser)){
-            if ($request->name == null && $request->staff_type !== null){
-                $FilterQueryNameNull = DB::table("m_staffs_data")->where("staff_type", $request->staff_type)->get();
-                return $FilterQueryNameNull;
-            }
-            if ($request->name !== null && $request->staff_type !== null){
-                if ($request->name == substr($request->name, 0, 6)){
-                    $query = DB::table("m_staffs_data")->where("last_name", $request->name)->where("staff_type", $request->staff_type)->get();
-                    return $query;
+        $Del_flg = DB::table("m_staffs_data")->where("del_flg", 0)->exists();
+
+        if($Del_flg){
+                if(isset($IDLoginUser)){
+                    if ($request->name == null && $request->staff_type !== null){
+                        $FilterQueryNameNull = DB::table("m_staffs_data")->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
+                        return $FilterQueryNameNull;
+                    }
+                    if ($request->name !== null && $request->staff_type !== null){
+                        if ($request->name == substr($request->name, 0, 6)){
+                            $query = DB::table("m_staffs_data")->where("last_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
+                            return $query;
+                        }
+                        else{
+                            $filterQuery = DB::table("m_staffs_data")
+                            ->where(DB::raw("CONCAT(last_name,first_name)"), $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)
+                            ->get();
+                            return $filterQuery;
+                        }
+                    }
+                    if ($request->name !== null && $request->staff_type == null){
+                        if ($request->name == substr($request->name, 0, 6)){
+                            $query = DB::table("m_staffs_data")->where("last_name", $request->name)->where("del_flg", 0)->get();
+                            return $query;
+                        }
+                        else{
+                            $FilterQueryStaffTypeNull = DB::table("m_staffs_data")->where(DB::raw("CONCAT(last_name, first_name)"), $request->name)->where("del_flg", 0)->get();
+                            return $FilterQueryStaffTypeNull;
+                        }
+                    }
+                    if ($request->name == null && $request->staff_type == null){
+                        $FillterQueryNull = DB::table("m_staffs_data")->where("del_flg", 0)->get();
+                        return $FillterQueryNull;
+                    }
                 }
                 else{
-                    $filterQuery = DB::table("m_staffs_data")
-                    ->where(DB::raw("CONCAT(last_name,first_name)"), $request->name)->where("staff_type", $request->staff_type)
-                    ->get();
-                    return $filterQuery;
+                    return response()->json([
+                        "message"=>"You haven't login yet"
+                    ], 404);
                 }
-            }
-            if ($request->name !== null && $request->staff_type == null){
-                if ($request->name == substr($request->name, 0, 6)){
-                    $query = DB::table("m_staffs_data")->where("last_name", $request->name)->get();
-                    return $query;
-                }
-                else{
-                    $FilterQueryStaffTypeNull = DB::table("m_staffs_data")->where(DB::raw("CONCAT(last_name, first_name)"), $request->name)->get();
-                    return $FilterQueryStaffTypeNull;
-                }
-            }
-            if ($request->name == null && $request->staff_type == null){
-                $FillterQueryNull = DB::table("m_staffs_data")->get();
-                return $FillterQueryNull;
-            }
         }
         else{
-            return response()->json([
-                "message"=>"You haven't login yet"
-            ], 404);
+            return "Nothing in here";
         }
         
 
