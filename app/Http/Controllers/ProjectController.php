@@ -21,13 +21,15 @@ class ProjectController extends Controller
         $Id_User_Login = $request['Id_User_Login'];
         $Id_Order = $request['Id_Order'];
 
-        $Project = Order::where("id", $Id_Order)->first();
+        if(isset($Id_User_Login)){
+            $Project = Order::where("id", $Id_Order)->first();
             $Project->update([
             "del_flg"=>1,
             "updated_user"=>$Id_User_Login,
             "updated_datetime"=>now()->setTimezone("Asia/Ho_Chi_Minh"),
         ]);
          return "Delete Order successfully";
+        }   
     }
     
     const STATUS_LABELS = [
@@ -62,9 +64,10 @@ class ProjectController extends Controller
             'internal_unit_price.regex'    => 'internal unit price need to be numeric',
             'IDLoginUser.required' => 'IDLoginUser is required'
         ]);
-    
-        $statusName = isset($request->status) ? self::STATUS_LABELS[$request->status] : null;
-        $newProjectId = DB::table('t_projects')->insertGetId([                
+        
+        if(isset($request->IDLoginUser)){
+            $statusName = isset($request->status) ? self::STATUS_LABELS[$request->status] : null;
+            $newProjectId = DB::table('t_projects')->insertGetId([                
             'project_name' => $request->project_name,
             'order_number' => $request->order_number,
             'client_name'  => $request->client_name,
@@ -77,11 +80,17 @@ class ProjectController extends Controller
             'updated_user'=>$request->IDLoginUser,
             'created_datetime' => now()->setTimezone('Asia/Ho_Chi_Minh'),
             'updated_datetime' => now()->setTimezone('Asia/Ho_Chi_Minh'),
-        ]);
-        return response()->json([
-            'message' => 'New Project ID is successfully inserted!',
-            'project_id' => $newProjectId
-        ], 201);
+            ]);
+            return response()->json([
+                'message' => 'New Project ID is successfully inserted!',
+                'project_id' => $newProjectId
+            ], 201);
+        }
+        else{
+            return response()->json([
+                "message"=>"You haven't login yet"
+            ]);
+        }
     }
 
     function Get_Order_By_ID(Request $request){
@@ -122,22 +131,23 @@ class ProjectController extends Controller
             return $validator->errors();
         }
         else{
-
-            $statusName = isset($request->status) ? self::STATUS_LABELS[$request->status] : null;
-            $Order = $Order::where('id', $request->OrderID)->first();
-            $Order->update([
-                'project_name'=>$request->project_name,
-                'order_number'=>$request->order_number,
-                'client_name'=>$request->client_name,
-                'order_date'=>$request->order_date,
-                'status'=>$request->status,  
-                'order_income'=>$request->order_income,
-                'internal_unit_price'=>$request->internal_unit_price,
-                "del_flg"=>0,
-                'updated_user'=>$request->IDLoginUser,
-                'updated_datetime'=>now(),
-            ]);
-            return "Edited Project Successfully";
+            if (isset($request->IDLoginUser)){
+                $statusName = isset($request->status) ? self::STATUS_LABELS[$request->status] : null;
+                $Order = $Order::where('id', $request->OrderID)->first();
+                $Order->update([
+                    'project_name'=>$request->project_name,
+                    'order_number'=>$request->order_number,
+                    'client_name'=>$request->client_name,
+                    'order_date'=>$request->order_date,
+                    'status'=>$request->status,  
+                    'order_income'=>$request->order_income,
+                    'internal_unit_price'=>$request->internal_unit_price,
+                    "del_flg"=>0,
+                    'updated_user'=>$request->IDLoginUser,
+                    'updated_datetime'=>now(),
+                ]);
+                return "Edited Project Successfully";
+            }
         }
     }
 
@@ -150,35 +160,43 @@ class ProjectController extends Controller
             'status'       => 'nullable|integer|between:0,4'
         ]);
 
-        $orderNumber = $request->input('order_number');
-        $projectName = $request->input('project_name');
-        $clientName  = $request->input('client_name');
-        $status      = $request->input('status');
+        $IDLoginUser = $request->IDLoginUser;
 
-        $statusName = isset($status) ? self::STATUS_LABELS[$status] : null;
+        if (isset($IDLoginUser)){
+            $orderNumber = $request->input('order_number');
+            $projectName = $request->input('project_name');
+            $clientName  = $request->input('client_name');
+            $status      = $request->input('status');
 
-        $query = DB::table('t_projects')
-            ->where('del_flg', 0);
+            $statusName = isset($status) ? self::STATUS_LABELS[$status] : null;
 
-        if ($orderNumber) {
-            $query->where('order_number', 'LIKE', "%$orderNumber%");
+            $query = DB::table('t_projects')
+                ->where('del_flg', 0);
+
+            if ($orderNumber) {
+                $query->where('order_number', 'LIKE', "%$orderNumber%");
+            }
+
+            if ($projectName) {
+                $query->where('project_name', 'LIKE', "%$projectName%");
+            }
+
+            if ($clientName) {
+                $query->where('client_name', 'LIKE', "%$clientName%");
+            }
+
+            if (isset($status)) {
+                $query->where('status', $status);
+            }
+
+            $projects = $query->orderBy('order_number', 'ASC')->get();
+
+            return $projects;
         }
-
-        if ($projectName) {
-            $query->where('project_name', 'LIKE', "%$projectName%");
+        else{
+            return response()->json([
+                "message"=>"You haven't login yet"
+            ]);
         }
-
-        if ($clientName) {
-            $query->where('client_name', 'LIKE', "%$clientName%");
-        }
-
-        if (isset($status)) {
-            $query->where('status', $status);
-        }
-
-        $projects = $query->orderBy('order_number', 'ASC')->get();
-
-        return $projects;
     }
-
 }

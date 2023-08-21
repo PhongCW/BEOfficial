@@ -16,57 +16,6 @@ use Illuminate\Support\Facades\Log;
 
 class T_project_Controller extends Controller
 {
-    function Actual_Plan(Request $request){
-
-        // Datas are filled out
-        $project_id = $request['order_id']; // t_project id (order)
-
-        // Here print out data nescessary base on order list (t_project)
-        $order = new Order;
-        $order = $order::where("id",$project_id)->first();
-        $order_number = $order['order_number'];
-        $client_name = $order['client_name'];
-        $project_name = $order['project_name'];
-        $internal_unit_price = $order['internal_unit_price'];
-        $order_income_A = $order['order_income'];
-
-        // Calculate order_income_B base on order_income_A
-        $order_income_B = $order_income_A*0.9;
-        
-        return response()->json([
-            "order_number"=>$order_number,
-            "client_name"=>$client_name,
-            "project_name"=>$project_name,
-            "internal_unit_price"=>$internal_unit_price,
-            "order_income_A"=>$order_income_A,
-            "order_income_B"=>$order_income_B
-        ]);
-    }
-
-    function Get_Staff(Request $request){
-
-        $StaffArray = [];
-        $Stafftype = [];
-
-        $StaffModel = new StaffModel;
-        $StaffModel = $StaffModel::all();
-
-        foreach ($StaffModel as $StaffItem) {
-            $Staff_Last_Name = $StaffItem['last_name'];
-            $Staff_First_Name = $StaffItem['first_name'];
-            array_push($StaffArray, $Staff_Last_Name.$Staff_First_Name);
-        }
-        foreach ($StaffModel as $Staff_Type) {
-            array_push($Stafftype, $Staff_Type['staff_type']);
-        }
-
-        $result = array_map(null, $StaffArray, $Stafftype);
- 
-        return response()->json([
-            "Staff and Stafftype" => $result
-        ], 200); 
-    }
-
     public function indexApi(Request $request, $selectedProjectId)
     {
         try {
@@ -131,8 +80,10 @@ class T_project_Controller extends Controller
         }
     }
 
+
     public function saveProjectPlanActuals(Request $request)
     {
+        
         try {
             $validatedData = $request->validate([
                 'project_id' => 'required|integer|exists:t_projects,id',
@@ -164,47 +115,48 @@ class T_project_Controller extends Controller
                 'nextyear_03_actual' => 'nullable|numeric',
             ]);
 
-            $IDLoginUser = $request['IDLoginUser'];
-            foreach ($validatedData['staff_id'] as $staffId) {
-                $existingRecord = DB::table('t_project_actual')
-                    ->where('project_id', $validatedData['project_id'])
-                    ->where('staff_id', $staffId)
-                    ->first();
+            $IDLoginUser = $request->IDLoginUser;
 
-                $dataToInsertOrUpdate = $existingRecord ? (array) $existingRecord : [];
+        foreach ($validatedData['staff_id'] as $staffId) {
+            $dataToInsertOrUpdate = [
+                'staff_id' => $staffId,
+                'project_id' => $validatedData['project_id'],
+                'updated_user' => $IDLoginUser,
+                'updated_datetime' => now(),
+            ];
 
-                if (!$existingRecord) {
-                    $dataToInsertOrUpdate['staff_id'] = $staffId;
-                    $dataToInsertOrUpdate['project_id'] = $validatedData['project_id'];
-                
-                    $dataToInsertOrUpdate['created_datetime'] = now();
-                }
+            // Kiểm tra và cập nhật dữ liệu
+            $existingRecord = DB::table('t_project_actual')
+                ->where('project_id', $validatedData['project_id'])
+                ->where('staff_id', $staffId)
+                ->first();
 
-                foreach ($validatedData as $key => $value) {
-                    if (!is_null($value) && $key != 'staff_id') {
-                        $dataToInsertOrUpdate[$key] = $value;
-                    }
-                }
+            if (!$existingRecord) {
+                $dataToInsertOrUpdate['created_user'] = $IDLoginUser;
+                $dataToInsertOrUpdate['created_datetime'] = now();
+            }
 
-                if ($existingRecord) {
-
-                    $dataToInsertOrUpdate['created_user'] = $IDLoginUser;
-                    $dataToInsertOrUpdate['updated_user'] = $IDLoginUser; // Lấy thông tin user từ Auth
-                    $dataToInsertOrUpdate['updated_datetime'] = now();
-
-                    DB::table('t_project_actual')
-                        ->where('project_id', $validatedData['project_id'])
-                        ->where('staff_id', $staffId)
-                        ->update($dataToInsertOrUpdate);
-                } else {
-                    DB::table('t_project_actual')->insert($dataToInsertOrUpdate);
+            foreach ($validatedData as $key => $value) {
+                if (!is_null($value) && $key != 'staff_id') {
+                    $dataToInsertOrUpdate[$key] = $value;
                 }
             }
 
-            return response()->json(['message' => 'Data saved successfully']);
-        } catch (\Exception $e) {
-            Log::error("Error in PlantController@saveProjectPlanActuals: " . $e->getMessage());
-            return response()->json(['message' => 'Internal Server Error'], 500);
+            if ($existingRecord) {
+                DB::table('t_project_actual')
+                    ->where('project_id', $validatedData['project_id'])
+                    ->where('staff_id', $staffId)
+                    ->update($dataToInsertOrUpdate);
+            } else {
+                DB::table('t_project_actual')->insert($dataToInsertOrUpdate);
+            }
         }
+
+        return response()->json(['message' => 'Data saved successfully']);
+    } catch (\Exception $e) {
+        Log::error("Error in PlantController@saveProjectPlanActuals: " . $e->getMessage());
+        return response()->json(['message' => 'Internal Server Error'], 500);
+    }
+
     }
 }
