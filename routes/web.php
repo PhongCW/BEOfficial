@@ -51,5 +51,7 @@ Route::get('/plant/{selected_project_id}', 'App\Http\Controllers\T_project_Contr
 
 Route::post('/project-plan-actuals/save', 'App\Http\Controllers\T_project_Controller@saveProjectPlanActuals');
 
+Route::get("/Test_Show_all", 'App\Http\Controllers\TestController@Test_Actual_Show');
+
 
 

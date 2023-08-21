@@ -157,6 +157,5 @@ class T_project_Controller extends Controller
         Log::error("Error in PlantController@saveProjectPlanActuals: " . $e->getMessage());
         return response()->json(['message' => 'Internal Server Error'], 500);
     }
-
     }
 }

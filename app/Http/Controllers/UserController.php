@@ -39,16 +39,14 @@ class UserController extends Controller
                     return "UserID is not available";
                 }
                 if ($User['del_flg'] == 0){
-                    $Password = $User['password'];
-                    if ($PasswordLogin !== $Password){
-                        return "Password is incorrect";
-                    } 
-                    else {
-                        Auth::login($User);
+                    if ($User && hash::check($PasswordLogin, $User->password)){
                         return response()->json([
-                            'message' => 'Successfully',
-                            'IDLoginUser' => $UserIDLogin
+                            "message"=>"Successfully",
+                            "IDLoginUser" => $UserIDLogin
                         ], 200);
+                    }
+                    else{
+                        return "Password is incorrect";
                     }
                 }
             }
