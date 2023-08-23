@@ -204,7 +204,7 @@ class StaffController extends Controller
                         }
                     }
                     if ($request->name == null && $request->staff_type == null){
-                        $FillterQueryNull = DB::table("m_staffs_data")->get();
+                        $FillterQueryNull = DB::table("m_staffs_data")->where("del_flg", 0)->get();
                         return $FillterQueryNull;
                     }
                 }
@@ -215,7 +215,7 @@ class StaffController extends Controller
                 }
         }
         else{
-            return "Nothing in here";
+            return $Del_flg;
         }
         
 

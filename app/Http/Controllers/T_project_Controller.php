@@ -18,68 +18,66 @@ class T_project_Controller extends Controller
 {
     public function indexApi(Request $request, $selectedProjectId)
     {
-        
+        try {
+            // lấy project id ở bảng plan
+            $projectInPlanActuals = DB::table('t_project_actual')
+                ->where('project_id', $selectedProjectId)
+                ->get();
 
-        // try {
-        //     // lấy project id ở bảng plan
-        //     $projectInPlanActuals = DB::table('t_project_actual')
-        //         ->where('project_id', $selectedProjectId)
-        //         ->get();
+            // lấy danh sách tất cả nhân viên từ m_staff_datas
+            $allStaffs = DB::table('m_staffs_data')
+                ->select('id as staff_id', 'staff_type', DB::raw("CONCAT(last_name, ' ', first_name) AS full_name"))
+                ->get();
 
-        //     // lấy danh sách tất cả nhân viên từ m_staff_datas
-        //     $allStaffs = DB::table('m_staffs_data')
-        //         ->select('id as staff_id', 'staff_type', DB::raw("CONCAT(last_name, ' ', first_name) AS full_name"))
-        //         ->get();
+            // Lấy thông tin project từ bảng t_projects
+            $projectData = DB::table('t_projects')
+                ->where('id', $selectedProjectId)
+                ->first();
 
-        //     // Lấy thông tin project từ bảng t_projects
-        //     $projectData = DB::table('t_projects')
-        //         ->where('id', $selectedProjectId)
-        //         ->first();
+            if (!$projectData) {
+                return response()->json(['message' => 'Project not found'], 404);
+            }
 
-        //     if (!$projectData) {
-        //         return response()->json(['message' => 'Project not found'], 404);
-        //     }
+            if (count($projectInPlanActuals) > 0) {
+                $results = [
+                    'projectData' => $projectData,
+                    'details' => []  // chi tiết về staff và dữ liệu t_project_plan_actuals
+                ];
 
-        //     if (count($projectInPlanActuals) > 0) {
-        //         $results = [
-        //             'projectData' => $projectData,
-        //             'details' => []  // chi tiết về staff và dữ liệu t_project_plan_actuals
-        //         ];
+                $planActualStaffIds = [];
+                foreach ($projectInPlanActuals as $planActual) {
+                    $planActualStaffIds[] = $planActual->staff_id;
 
-        //         $planActualStaffIds = [];
-        //         foreach ($projectInPlanActuals as $planActual) {
-        //             $planActualStaffIds[] = $planActual->staff_id;
+                    $staff = $allStaffs->firstWhere('staff_id', $planActual->staff_id);
+                    if ($staff) {
+                        $results['details'][] = [
+                            'planActualData' => $planActual,
+                            'staffData' => $staff
+                        ];
+                    }
+                }
 
-        //             $staff = $allStaffs->firstWhere('staff_id', $planActual->staff_id);
-        //             if ($staff) {
-        //                 $results['details'][] = [
-        //                     'planActualData' => $planActual,
-        //                     'staffData' => $staff
-        //                 ];
-        //             }
-        //         }
+                // show danh sách staff chưa có trong bảng plant
+                $remainingStaffIds = $allStaffs->pluck('staff_id')->diff($planActualStaffIds);
 
-        //         // show danh sách staff chưa có trong bảng plant
-        //         $remainingStaffIds = $allStaffs->pluck('staff_id')->diff($planActualStaffIds);
+                $remainingStaffs = [];
+                foreach ($remainingStaffIds as $remainingStaffId) {
+                    $staff = $allStaffs->firstWhere('staff_id', $remainingStaffId);
+                    if ($staff) {
+                        $remainingStaffs[] = $staff;  // thêm vào mảng riêng
+                    }
+                }
 
-        //         $remainingStaffs = [];
-        //         foreach ($remainingStaffIds as $remainingStaffId) {
-        //             $staff = $allStaffs->firstWhere('staff_id', $remainingStaffId);
-        //             if ($staff) {
-        //                 $remainingStaffs[] = $staff;  // thêm vào mảng riêng
-        //             }
-        //         }
+                $results['remainingStaffs'] = $remainingStaffs;
 
-        //         $results['remainingStaffs'] = $remainingStaffs;
-
-        //         return response()->json($results);
-        //     } else {
-        //         return response()->json(['projectData' => $projectData, 'staffData' => $allStaffs]);
-        //     }
-        // } catch (\Exception $e) {
-        //     Log::error("Error in PlantController@indexApi: " . $e->getMessage());
-        //     return response()->json(['message' => 'Internal Server Error'], 500);
-        // }
+                return response()->json($results);
+            } else {
+                return response()->json(['projectData' => $projectData, 'staffData' => $allStaffs]);
+            }
+        } catch (\Exception $e) {
+            Log::error("Error in PlantController@indexApi: " . $e->getMessage());
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
     }
 
 
