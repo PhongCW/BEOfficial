@@ -170,7 +170,7 @@ class StaffController extends Controller
                         return $FilterQueryNameNull;
                     }
                     if ($request->name !== null && $request->staff_type !== null){
-                        if ($request->name == substr($request->name, 0, 6)){
+                        if ($request->name == substr($request->name, 0,6)){
                             $queryLastName = DB::table("m_staffs_data")->where("last_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
                             $queryFirstName = DB::table("m_staffs_data")->where("first_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
                             if (count($queryLastName)>0){
