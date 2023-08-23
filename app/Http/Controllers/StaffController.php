@@ -147,7 +147,7 @@ class StaffController extends Controller
                 $Staff_Edit_Data = $Staff_Edit->getData();
                 $Staff = new Staff;
                 $ID_Staff_Edit = $request['ID_Staff_Edit'];
-                $StaffTypeArray = ["社員", "パートナー"];
+                $StaffTypeArray = [0, 1];
 
                 $staff_type = $Staff_Edit_Data['staff_type'] == $StaffTypeArray[0] ? 0 : 1;
 
