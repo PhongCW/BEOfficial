@@ -63,7 +63,7 @@ class StaffController extends Controller
         if (isset($IDLoginUser)){
             $User = User::where("id", $IDLoginUser)->first();
             Auth::login($User);
-            $StaffTypeArray = ["社員", "パートナー"];
+            $StaffTypeArray = [0, 1];
 
             $Staff_Create = Validator::make($request->all(), [
                 'last_name'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
