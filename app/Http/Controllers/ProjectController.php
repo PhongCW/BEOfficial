@@ -56,7 +56,7 @@ class ProjectController extends Controller
             'internal_unit_price' => 'required|regex:/^[0-9]+$/',
         ], [
             'project_name.required' => 'project name is required',
-            'project_name.regex'    => 'project name is Hiragana, Katakana or Kanji',
+            'project_name.regex'    => 'Only input 2 byte character!',
             'order_number.required' => 'project name is required',
             'client_name.required'  => 'client name is required',
             'order_date.date'       => 'order date need to be date',
@@ -127,7 +127,7 @@ class ProjectController extends Controller
 
         ], [
             'project_name.required' => 'project_name is required',
-            'project_name.regex'    => 'project_name is Hiragana, Katakana or Kanji',
+            'project_name.regex'    => 'Only input 2 byte character!',
             'order_number.required' => 'order_number is required',
             'client_name.required'  => 'client_name is required',
             'order_date.date'       => 'order_date need to be date',
@@ -175,7 +175,7 @@ class ProjectController extends Controller
             'client_name'  => 'nullable|string|max:255',
             'status'       => 'nullable|integer|between:0,4'
         ], [
-            "project_name.regex"=>"project name is Hiragana, Katakana or Kanji"
+            "project_name.regex"=>"Only 2 byte Characters"
         ]);
         if ($Check->fails()){
             return $Check->errors();
