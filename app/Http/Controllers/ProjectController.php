@@ -5,8 +5,10 @@ use App\Http\Controllers\Controller;
 use App\Models\StaffModel;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 
 class ProjectController extends Controller
@@ -22,10 +24,12 @@ class ProjectController extends Controller
         $Id_Order = $request['Id_Order'];
 
         if(isset($Id_User_Login)){
+            $User = User::where("id", $Id_User_Login)->first();
+            Auth::login($User);
             $Project = Order::where("id", $Id_Order)->first();
             $Project->update([
             "del_flg"=>1,
-            "updated_user"=>$Id_User_Login,
+            "updated_user"=>Auth::user()->id,
             "updated_datetime"=>now()->setTimezone("Asia/Ho_Chi_Minh"),
         ]);
          return "Delete Order successfully";
@@ -50,7 +54,6 @@ class ProjectController extends Controller
             'status'       => 'required|integer|between:0,4',
             'order_income' => 'required|regex:/^[0-9]+$/',
             'internal_unit_price' => 'required|regex:/^[0-9]+$/',
-            'IDLoginUser' => 'required|string',
         ], [
             'project_name.required' => 'project name is required',
             'project_name.regex'    => 'project name need to be string',
@@ -62,10 +65,11 @@ class ProjectController extends Controller
             'order_income.regex'    => 'order income need to be numeric',
             'internal_unit_price.required' => 'internal unit price is required',
             'internal_unit_price.regex'    => 'internal unit price need to be numeric',
-            'IDLoginUser.required' => 'IDLoginUser is required'
         ]);
-        
-        if(isset($request->IDLoginUser)){
+        $IDLoginUser = $request->IDLoginUser;
+        if(isset($IDLoginUser)){
+            $User = User::where("id", $IDLoginUser)->first();
+            Auth::login($User);
             $statusName = isset($request->status) ? self::STATUS_LABELS[$request->status] : null;
             $newProjectId = DB::table('t_projects')->insertGetId([                
             'project_name' => $request->project_name,
@@ -76,8 +80,8 @@ class ProjectController extends Controller
             'order_income' => $request->order_income,
             'internal_unit_price' => $request->internal_unit_price,
             'del_flg' => 0,
-            'created_user' => $request->IDLoginUser,
-            'updated_user'=>$request->IDLoginUser,
+            'created_user' => Auth::user()->id,
+            'updated_user'=>Auth::user()->id,
             'created_datetime' => now()->setTimezone('Asia/Ho_Chi_Minh'),
             'updated_datetime' => now()->setTimezone('Asia/Ho_Chi_Minh'),
             ]);
@@ -95,10 +99,18 @@ class ProjectController extends Controller
 
     function Get_Order_By_ID(Request $request){
         $data = $request;
-        $OrderID = $data['OrderID'];
-        $Order = new Order;
-        $Order = $Order::where("id", $OrderID)->first();
-        return $Order;
+        $IDLoginUser = $request->IDLoginUser;
+        if (isset($IDLoginUser)){
+            $OrderID = $data['OrderID'];
+            $Order = new Order;
+            $Order = $Order::where("id", $OrderID)->first();
+            return $Order;
+        }
+        else{
+            return response()->json([
+                "message"=>"You haven't not login yet"
+            ], 404);
+        }
     }
 
     function Order_Edit_Detail(Request $request){
@@ -112,7 +124,7 @@ class ProjectController extends Controller
             'order_income' => 'required|regex:/^[0-9]+$/',
             'internal_unit_price' => 'required|regex:/^[0-9]+$/',
             'OrderID' => 'required|numeric',
-            'IDLoginUser' => 'required|numeric',
+
         ], [
             'project_name.required' => 'project_name is required',
             'project_name.regex'    => 'project_name need to be string',
@@ -125,13 +137,16 @@ class ProjectController extends Controller
             'internal_unit_price.required' => 'internal_unit_price is required',
             'internal_unit_price.regex'    => 'internal_unit_price need to be numeric',
             'OrderID.required'=>"OrderID is required",
-            "IDLoginUser.required"=>"IDLoginUser is required"
+
         ]);
         if ($validator->fails()){
             return $validator->errors();
         }
         else{
-            if (isset($request->IDLoginUser)){
+            $IDLoginUser = $request->IDLoginUser;
+            if (isset($IDLoginUser)){
+                $User = User::where("id", $IDLoginUser)->first();
+                Auth::login($User);
                 $statusName = isset($request->status) ? self::STATUS_LABELS[$request->status] : null;
                 $Order = $Order::where('id', $request->OrderID)->first();
                 $Order->update([
@@ -143,7 +158,7 @@ class ProjectController extends Controller
                     'order_income'=>$request->order_income,
                     'internal_unit_price'=>$request->internal_unit_price,
                     "del_flg"=>0,
-                    'updated_user'=>$request->IDLoginUser,
+                    'updated_user'=>Auth::user()->id,
                     'updated_datetime'=>now(),
                 ]);
                 return "Edited Project Successfully";
@@ -163,6 +178,8 @@ class ProjectController extends Controller
         $IDLoginUser = $request->IDLoginUser;
 
         if (isset($IDLoginUser)){
+            $User = User::where("id", $IDLoginUser)->first();
+            Auth::login($User);
             $orderNumber = $request->input('order_number');
             $projectName = $request->input('project_name');
             $clientName  = $request->input('client_name');

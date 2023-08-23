@@ -40,9 +40,10 @@ class UserController extends Controller
                 }
                 if ($User['del_flg'] == 0){
                     if ($User && hash::check($PasswordLogin, $User->password)){
+                        Auth::login($User);
                         return response()->json([
                             "message"=>"Successfully",
-                            "IDLoginUser" => $UserIDLogin
+                            "IDLoginUser" => Auth::user()->id
                         ], 200);
                     }
                     else{

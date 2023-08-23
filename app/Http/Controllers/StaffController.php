@@ -8,6 +8,7 @@ use App\Models\StaffModel;
 use App\Models\Staff;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Psr\Http\Message\ResponseInterface;
@@ -36,11 +37,14 @@ class StaffController extends Controller
         $Staff = new Staff;
         $Staff = $Staff::where("id", $SelectedStaffID)->first();
 
+        $User = User::where("id", $ID_Login)->first();
+        Auth::login($User);
+
         if(isset($ID_Login)){
             if ($SelectedStaff_Condition == true){
                 $Staff->update([
                     'del_flg' => 1,
-                    'updated_user'=> $ID_Login,
+                    'updated_user'=> Auth::user()->id,
                     'updated_datetime'=> now()->setTimezone("Asia/Ho_Chi_Minh"),
                 ]);
                 return "Deleted Successfully";
@@ -57,6 +61,8 @@ class StaffController extends Controller
         $IDLoginUser = $request->IDLoginUser;
 
         if (isset($IDLoginUser)){
+            $User = User::where("id", $IDLoginUser)->first();
+            Auth::login($User);
             $StaffTypeArray = ["社員", "パートナー"];
 
             $Staff_Create = Validator::make($request->all(), [
@@ -93,9 +99,9 @@ class StaffController extends Controller
                     $StaffModel['staff_type'] = 1;
                 }
                 $StaffModel['del_flg'] = 0;
-                $StaffModel['created_user'] = $IDLoginUser;
+                $StaffModel['created_user'] = Auth::user()->id;
                 $StaffModel['created_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
-                $StaffModel['updated_user'] = $IDLoginUser;
+                $StaffModel['updated_user'] = Auth::user()->id;
                 $StaffModel['updated_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
 
                 $StaffModel -> save();
@@ -113,6 +119,8 @@ class StaffController extends Controller
         $IDLoginUser = $request->IDLoginUser;
 
         if (isset($IDLoginUser)){
+            $User = User::where("id", $IDLoginUser)->first();
+            Auth::login($User);
             $Staff_Edit = Validator::make($request->all(),[
                 'last_name'=>"required|string|nullable|size:2",
                 'first_name'=>"required|string|nullable|size:2",
@@ -140,7 +148,7 @@ class StaffController extends Controller
                     "first_name_furigana" => $Staff_Edit_Data['first_name_furigana'],
                     'staff_type' => 0,
                     'del_flg' => 0,
-                    'updated_user' => $IDLoginUser,
+                    'updated_user' => Auth::user()->id,
                     'updated_datetime' => now()->setTimezone("Asia/Ho_Chi_Minh"),
                 ]);
                 return "Staff is edited";
@@ -165,6 +173,9 @@ class StaffController extends Controller
 
         if($Del_flg){
                 if(isset($IDLoginUser)){
+                    $User = User::where("id", $IDLoginUser)->first();
+                    Auth::login($User);
+
                     if ($request->name == null && $request->staff_type !== null){
                         $FilterQueryNameNull = DB::table("m_staffs_data")->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
                         return $FilterQueryNameNull;
@@ -218,7 +229,6 @@ class StaffController extends Controller
             return $Del_flg;
         }
         
-
         // $Group = [];
         // $GroupRightHalf = [];
         // $GroupLeftHalf = [];
