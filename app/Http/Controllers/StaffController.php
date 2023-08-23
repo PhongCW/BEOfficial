@@ -162,6 +162,9 @@ class StaffController extends Controller
                     'updated_user' => Auth::user()->id,
                     'updated_datetime' => now()->setTimezone("Asia/Ho_Chi_Minh"),
                 ]);
+                return response()->json([
+                    "message"=>"Staff is edited"
+                ]);
             }
         }
         else{
