@@ -66,16 +66,20 @@ class StaffController extends Controller
             $StaffTypeArray = ["社員", "パートナー"];
 
             $Staff_Create = Validator::make($request->all(), [
-                'last_name'=>"required|nullable|string|size:2",
-                'first_name'=>"required|nullable|string|size:2",
-                'last_name_furigana'=>'required|nullable|string',
-                'first_name_furigana'=>'required|nullable|string',
+                'last_name'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
+                'first_name'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
+                'last_name_furigana'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
+                'first_name_furigana'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
                 'staff_type'=>'required|string'
             ], [
                 'last_name.required' => "Last name is required",
+                "last_name.regex"=> "Last name is Hiragana, Katakana or kanji",
                 'first_name.required' => "First name is required",
+                "first_name.regex"=>"First name is Hiragana, Katakana or kanji",
                 'last_name_furigana.required'=> "Last name furigana is required",
+                "last_name_furigana.regex"=>"Last name furigana is Hiragana, Katakana or kanji",
                 "first_name_furigana.required" => "first name furigana is required",
+                "first_name_furigana.regex"=>"first name furigana is Hiragana, Katakana or kanji",
                 'staff_type.required'=>'staff type is required'
             ]);
             if ($Staff_Create->fails()) {
@@ -122,15 +126,19 @@ class StaffController extends Controller
             $User = User::where("id", $IDLoginUser)->first();
             Auth::login($User);
             $Staff_Edit = Validator::make($request->all(),[
-                'last_name'=>"required|string|nullable|size:2",
-                'first_name'=>"required|string|nullable|size:2",
-                'last_name_furigana'=>"required|string|nullable",
-                'first_name_furigana'=>"required|string|nullable",
+                'last_name'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
+                'first_name'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
+                'last_name_furigana'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
+                'first_name_furigana'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
             ],[
                 'last_name.required' => "Last name is required",
+                "last_name.regex"=> "Last name is Hiragana, Katakana or kanji",
                 'first_name.required' => "First name is required",
+                "first_name.regex"=>"First name is Hiragana, Katakana or kanji",
                 'last_name_furigana.required'=> "Last name furigana is required",
+                "last_name_furigana.regex"=>"Last name furigana is Hiragana, Katakana or kanji",
                 "first_name_furigana.required" => "first name furigana is required",
+                "first_name_furigana.regex"=>"first name furigana is Hiragana, Katakana or kanji",
             ]);
             if ($Staff_Edit->fails()){
                 return $Staff_Edit->errors();
@@ -162,12 +170,19 @@ class StaffController extends Controller
     }
     function HandleSearchStaff(Request $request){
 
-        $request->validate([
-            "name"=>"string|nullable",
+        $Check = Validator::make($request->all(), [
+            "name"=> 'nullable|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
             "staff_type"=>"nullable|numeric"
+        ], [
+            "name.regex"=>"Name is kanji, Hiragana or Katakana"
         ]);
-
-        $IDLoginUser = $request->IDLoginUser;
+        if ($Check->fails()){
+            return response()->json([
+                "message"=>"Name is kanji, Hiragana or Katakana"
+            ]);
+        }
+        else{
+            $IDLoginUser = $request->IDLoginUser;
 
         $Del_flg = DB::table("m_staffs_data")->where("del_flg", 0)->exists();
 
@@ -181,7 +196,7 @@ class StaffController extends Controller
                         return $FilterQueryNameNull;
                     }
                     if ($request->name !== null && $request->staff_type !== null){
-                        if ($request->name == substr($request->name, 0,6)){
+                        if ($request->name == substr($request->name, 0)){
                             $queryLastName = DB::table("m_staffs_data")->where("last_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
                             $queryFirstName = DB::table("m_staffs_data")->where("first_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
                             if (count($queryLastName)>0){
@@ -191,6 +206,10 @@ class StaffController extends Controller
                                 return $queryFirstName;
                             }
                         }
+                        if ($request->name == substr($request->name, 0)){
+                            $Result = DB::table("m_staffs_data")->where(DB::raw("CONCAT(last_name, first_name)"), $request->name)->where("del_flg", 0)->get();
+                            return $Result;
+                        }
                         else{
                             $filterQuery = DB::table("m_staffs_data")
                             ->where(DB::raw("CONCAT(last_name,first_name)"), $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)
@@ -199,7 +218,7 @@ class StaffController extends Controller
                         }
                     }
                     if ($request->name !== null && $request->staff_type == null){
-                        if ($request->name == substr($request->name, 0,6)){
+                        if ($request->name == substr($request->name, 0)){
                             $queryLastName = DB::table("m_staffs_data")->where("last_name", $request->name)->where("del_flg", 0)->get();
                             $queryFirstName = DB::table("m_staffs_data")->where("first_name", $request->name)->where("del_flg", 0)->get();
                             if (count($queryLastName)>0){
@@ -228,6 +247,8 @@ class StaffController extends Controller
         else{
             return $Del_flg;
         }
+        }
+
         
         // $Group = [];
         // $GroupRightHalf = [];

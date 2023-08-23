@@ -47,7 +47,7 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'project_name' => 'required|string',
+            'project_name' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
             'order_number' => 'required|string|max:255',
             'client_name'  => 'required|string|max:255',
             'order_date'   => 'required|date',
@@ -56,7 +56,7 @@ class ProjectController extends Controller
             'internal_unit_price' => 'required|regex:/^[0-9]+$/',
         ], [
             'project_name.required' => 'project name is required',
-            'project_name.regex'    => 'project name need to be string',
+            'project_name.regex'    => 'project name is Hiragana, Katakana or Kanji',
             'order_number.required' => 'project name is required',
             'client_name.required'  => 'client name is required',
             'order_date.date'       => 'order date need to be date',
@@ -116,7 +116,7 @@ class ProjectController extends Controller
     function Order_Edit_Detail(Request $request){
         $Order = new Order;
         $validator = Validator::make($request->all(), [
-            'project_name' => 'required|regex:/^[\p{Han}]{2}$/u',
+            'project_name' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
             'order_number' => 'required|string|max:255',
             'client_name'  => 'required|string|max:255',
             'order_date'   => 'required|date',
@@ -127,7 +127,7 @@ class ProjectController extends Controller
 
         ], [
             'project_name.required' => 'project_name is required',
-            'project_name.regex'    => 'project_name need to be string',
+            'project_name.regex'    => 'project_name is Hiragana, Katakana or Kanji',
             'order_number.required' => 'order_number is required',
             'client_name.required'  => 'client_name is required',
             'order_date.date'       => 'order_date need to be date',
@@ -168,14 +168,20 @@ class ProjectController extends Controller
 
     function HandleSearchOrder(Request $request)
     {
-        $request->validate([
+
+        $Check = Validator::make($request->all(), [
             'order_number' => 'nullable|string|max:255',
-            'project_name' => 'nullable|string|max:255',
+            'project_name' => 'nullable|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
             'client_name'  => 'nullable|string|max:255',
             'status'       => 'nullable|integer|between:0,4'
+        ], [
+            "project_name.regex"=>"project name is Hiragana, Katakana or Kanji"
         ]);
-
-        $IDLoginUser = $request->IDLoginUser;
+        if ($Check->fails()){
+            return $Check->errors();
+        }
+        else{
+            $IDLoginUser = $request->IDLoginUser;
 
         if (isset($IDLoginUser)){
             $User = User::where("id", $IDLoginUser)->first();
@@ -214,6 +220,7 @@ class ProjectController extends Controller
             return response()->json([
                 "message"=>"You haven't login yet"
             ]);
+        }
         }
     }
 }

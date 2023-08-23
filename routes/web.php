@@ -47,7 +47,7 @@ Route::post("/Actual_Plan", 'App\Http\Controllers\T_project_Controller@Actual_Pl
 
 Route::get("/Get_Staff", 'App\Http\Controllers\T_project_Controller@Get_Staff');
 
-Route::get('/plant/{selected_project_id}', 'App\Http\Controllers\T_project_Controller@indexApi');
+Route::post('/plant', 'App\Http\Controllers\T_project_Controller@indexApi');
 
 Route::post('/project-plan-actuals/save', 'App\Http\Controllers\T_project_Controller@saveProjectPlanActuals');
 

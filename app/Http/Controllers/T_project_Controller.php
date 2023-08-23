@@ -17,17 +17,18 @@ use App\Models\User;
 
 class T_project_Controller extends Controller
 {
-    public function indexApi(Request $request, $selectedProjectId)
+    public function indexApi(Request $request)
     {
 
             $IDLoginUser = $request->IDLoginUser;
+            $ID_Project = $request->selectedProjectId;
             $User = User::where("id", $IDLoginUser)->first();
 
             if (isset($IDLoginUser)){
                 // lấy project id ở bảng plan
                 Auth::login($User);
                 $projectInPlanActuals = DB::table('t_project_actual')
-                ->where('project_id', $selectedProjectId)
+                ->where('project_id', $ID_Project)
                 ->get();
 
         // lấy danh sách tất cả nhân viên từ m_staff_datas
@@ -37,7 +38,7 @@ class T_project_Controller extends Controller
 
                 // Lấy thông tin project từ bảng t_projects
                 $projectData = DB::table('t_projects')
-                    ->where('id', $selectedProjectId)
+                    ->where('id', $ID_Project)
                     ->first();
 
                 if (!$projectData) {
