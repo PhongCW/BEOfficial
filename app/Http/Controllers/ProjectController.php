@@ -22,9 +22,8 @@ class ProjectController extends Controller
     function Delete_order(Request $request){
         $Id_User_Login = $request['IDLoginUser'];
         $Id_Order = $request['Id_Order'];
-
-        if(isset($Id_User_Login)){
-            $User = User::where("id", $Id_User_Login)->first();
+        $User = User::where("id", $Id_User_Login)->first();
+        if(isset($User)){
             Auth::login($User);
             $Project = Order::where("id", $Id_Order)->first();
             $Project->update([
@@ -67,8 +66,8 @@ class ProjectController extends Controller
             'internal_unit_price.regex'    => 'internal unit price need to be numeric',
         ]);
         $IDLoginUser = $request->IDLoginUser;
-        if(isset($IDLoginUser)){
-            $User = User::where("id", $IDLoginUser)->first();
+        $User = User::where("id", $IDLoginUser)->first();
+        if(isset($User)){
             Auth::login($User);
             $statusName = isset($request->status) ? self::STATUS_LABELS[$request->status] : null;
             $newProjectId = DB::table('t_projects')->insertGetId([                
@@ -100,7 +99,9 @@ class ProjectController extends Controller
     function Get_Order_By_ID(Request $request){
         $data = $request;
         $IDLoginUser = $request->IDLoginUser;
-        if (isset($IDLoginUser)){
+        $User = User::where("id", $IDLoginUser)->first();
+        Auth::login($User);
+        if (isset($User)){
             $OrderID = $data['OrderID'];
             $Order = new Order;
             $Order = $Order::where("id", $OrderID)->first();
@@ -144,8 +145,8 @@ class ProjectController extends Controller
         }
         else{
             $IDLoginUser = $request->IDLoginUser;
-            if (isset($IDLoginUser)){
-                $User = User::where("id", $IDLoginUser)->first();
+            $User = User::where("id", $IDLoginUser)->first();
+            if (isset($User)){
                 Auth::login($User);
                 $statusName = isset($request->status) ? self::STATUS_LABELS[$request->status] : null;
                 $Order = $Order::where('id', $request->OrderID)->first();
@@ -181,10 +182,9 @@ class ProjectController extends Controller
             return $Check->errors();
         }
         else{
-            $IDLoginUser = $request->IDLoginUser;
-
-        if (isset($IDLoginUser)){
-            $User = User::where("id", $IDLoginUser)->first();
+        $IDLoginUser = $request->IDLoginUser;
+        $User = User::where("id", $IDLoginUser)->first();
+        if (isset($User)){
             Auth::login($User);
             $orderNumber = $request->input('order_number');
             $projectName = $request->input('project_name');

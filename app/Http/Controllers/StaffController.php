@@ -40,7 +40,7 @@ class StaffController extends Controller
         $User = User::where("id", $ID_Login)->first();
         Auth::login($User);
 
-        if(isset($ID_Login)){
+        if(isset($User)){
             if ($SelectedStaff_Condition == true){
                 $Staff->update([
                     'del_flg' => 1,
@@ -59,9 +59,8 @@ class StaffController extends Controller
     function Staff_Create(Request $request){
 
         $IDLoginUser = $request->IDLoginUser;
-
-        if (isset($IDLoginUser)){
-            $User = User::where("id", $IDLoginUser)->first();
+        $User = User::where("id", $IDLoginUser)->first();
+        if (isset($User)){
             Auth::login($User);
             $StaffTypeArray = [0, 1];
 
@@ -121,9 +120,8 @@ class StaffController extends Controller
     }
     function Staff_Detail_Edit(Request $request){
         $IDLoginUser = $request->IDLoginUser;
-
-        if (isset($IDLoginUser)){
-            $User = User::where("id", $IDLoginUser)->first();
+        $User = User::where("id", $IDLoginUser)->first();
+        if (isset($User)){
             Auth::login($User);
             $Staff_Edit = Validator::make($request->all(),[
                 'last_name'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
@@ -185,13 +183,13 @@ class StaffController extends Controller
             return $Check->errors();
         }
         else{
-            $IDLoginUser = $request->IDLoginUser;
+        $IDLoginUser = $request->IDLoginUser;
 
         $Del_flg = DB::table("m_staffs_data")->where("del_flg", 0)->exists();
 
         if($Del_flg){
-                if(isset($IDLoginUser)){
-                    $User = User::where("id", $IDLoginUser)->first();
+                $User = User::where("id", $IDLoginUser)->first();
+                if(isset($User)){
                     Auth::login($User);
 
                     if ($request->name == null && $request->staff_type !== null){

@@ -24,7 +24,7 @@ class T_project_Controller extends Controller
             $ID_Project = $request->selectedProjectId;
             $User = User::where("id", $IDLoginUser)->first();
 
-            if (isset($IDLoginUser)){
+            if (isset($User)){
                 // lấy project id ở bảng plan
                 Auth::login($User);
                 $projectInPlanActuals = DB::table('t_project_actual')
@@ -93,9 +93,8 @@ class T_project_Controller extends Controller
     public function saveProjectPlanActuals(Request $request)
     {
         $IDLoginUser = $request->IDLoginUser;
-
-        if (isset($IDLoginUser)) {
-            $User = User::where("id", $IDLoginUser)->first();
+        $User = User::where("id", $IDLoginUser)->first();
+        if (isset($User)) {
             Auth::login($User);
             try {
                 $validatedData = $request->validate([
