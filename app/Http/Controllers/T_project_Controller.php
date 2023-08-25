@@ -79,7 +79,7 @@ class T_project_Controller extends Controller
 
                     return response()->json($results);
                 } else {
-                    return response()->json(['projectData' => $projectData, 'staffData' => $allStaffs]);
+                    return response()->json(['projectData' => $projectData, 'remainingStaffs' => $allStaffs]);
                 }
             }
             else{
@@ -94,6 +94,7 @@ class T_project_Controller extends Controller
     {
         $IDLoginUser = $request->IDLoginUser;
         $User = User::where("id", $IDLoginUser)->first();
+        
         if (isset($User)) {
             Auth::login($User);
             try {
