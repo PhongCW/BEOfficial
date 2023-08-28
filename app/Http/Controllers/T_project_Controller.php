@@ -78,8 +78,9 @@ class T_project_Controller extends Controller
                     $results['remainingStaffs'] = $remainingStaffs;
 
                     return response()->json($results);
-                } else {
-                    return response()->json(['projectData' => $projectData, 'staffData' => $allStaffs]);
+                } 
+                else {
+                    return response()->json(['projectData' => $projectData, 'remainingStaffs' => $allStaffs]);
                 }
             }
             else{
