@@ -200,33 +200,31 @@ class StaffController extends Controller
                         if ($request->name == substr($request->name, 0)){
                             $queryLastName = DB::table("m_staffs_data")->where("last_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
                             $queryFirstName = DB::table("m_staffs_data")->where("first_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
+                            $queryFullNamee = DB::table("m_staffs_data")->where(DB::raw("CONCAT(last_name, first_name)"), $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
                             if (count($queryLastName)>0){
                                 return $queryLastName;
                             }
                             if (count($queryFirstName)>0){
                                 return $queryFirstName;
                             }
-                        }
-                        if ($request->name == substr($request->name, 0)){
-                            $Result = DB::table("m_staffs_data")->where(DB::raw("CONCAT(last_name, first_name)"), $request->name)->where("del_flg", 0)->get();
-                            return $Result;
-                        }
-                        else{
-                            $filterQuery = DB::table("m_staffs_data")
-                            ->where(DB::raw("CONCAT(last_name,first_name)"), $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)
-                            ->get();
-                            return $filterQuery;
+                            if (count($queryFullNamee)>0){
+                                return $queryFullNamee;
+                            }
                         }
                     }
                     if ($request->name !== null && $request->staff_type == null){
                         if ($request->name == substr($request->name, 0)){
                             $queryLastName = DB::table("m_staffs_data")->where("last_name", $request->name)->where("del_flg", 0)->get();
                             $queryFirstName = DB::table("m_staffs_data")->where("first_name", $request->name)->where("del_flg", 0)->get();
+                            $queryFullName = DB::table("m_staffs_data")->where(DB::raw("CONCAT(last_name, first_name)"), $request->name)->where("del_flg", 0)->get();
                             if (count($queryLastName)>0){
                                 return $queryLastName;
                             }
                             if (count($queryFirstName)>0){
                                 return $queryFirstName;
+                            }
+                            if (count($queryFullName)>0){
+                                return $queryFullName;
                             }
                         }
                         else{
