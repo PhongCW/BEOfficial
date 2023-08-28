@@ -31,7 +31,7 @@ class T_project_Controller extends Controller
                 ->where('project_id', $ID_Project)
                 ->get();
 
-        // lấy danh sách tất cả nhân viên từ m_staff_datas
+        // lấy danh sách tất cả nhân viên từ m_detailss
                 $allStaffs = DB::table('m_staffs_data')
                     ->select('id as staff_id', 'staff_type', DB::raw("CONCAT(last_name, ' ', first_name) AS full_name"))
                     ->get();
@@ -79,7 +79,7 @@ class T_project_Controller extends Controller
 
                     return response()->json($results);
                 } else {
-                    return response()->json(['projectData' => $projectData, 'remainingStaffs' => $allStaffs]);
+                    return response()->json(['projectData' => $projectData, 'staffData' => $allStaffs]);
                 }
             }
             else{
@@ -89,56 +89,56 @@ class T_project_Controller extends Controller
         }
     }
 
-
-    public function saveProjectPlanActuals(Request $request)
-    {
+    public function saveProjectPlanActuals(Request $request){
         $IDLoginUser = $request->IDLoginUser;
         $User = User::where("id", $IDLoginUser)->first();
-        
+
         if (isset($User)) {
             Auth::login($User);
             try {
                 $validatedData = $request->validate([
-                    'project_id' => 'required|integer|exists:t_projects,id',
-                    'staff_data' => 'required|array',
-                    'staff_data.*.staff_id' => 'required|integer|exists:m_staffs_data,id',
-                    'staff_data.*.this_year_04_plan' => 'nullable|numeric',
-                    'staff_data.*.this_year_04_actual' => 'nullable|numeric',
-                    'staff_data.*.this_year_05_plan' => 'nullable|numeric',
-                    'staff_data.*.this_year_05_actual' => 'nullable|numeric',
-                    'staff_data.*.this_year_06_plan' => 'nullable|numeric',
-                    'staff_data.*.this_year_06_actual' => 'nullable|numeric',
-                    'staff_data.*.this_year_07_plan' => 'nullable|numeric',
-                    'staff_data.*.this_year_07_actual' => 'nullable|numeric',
-                    'staff_data.*.this_year_08_plan' => 'nullable|numeric',
-                    'staff_data.*.this_year_08_actual' => 'nullable|numeric',
-                    'staff_data.*.this_year_09_plan' => 'nullable|numeric',
-                    'staff_data.*.this_year_09_actual' => 'nullable|numeric',
-                    'staff_data.*.this_year_10_plan' => 'nullable|numeric',
-                    'staff_data.*.this_year_10_actual' => 'nullable|numeric',
-                    'staff_data.*.this_year_11_plan' => 'nullable|numeric',
-                    'staff_data.*.this_year_11_actual' => 'nullable|numeric',
-                    'staff_data.*.this_year_12_plan' => 'nullable|numeric',
-                    'staff_data.*.this_year_12_actual' => 'nullable|numeric',
-                    'staff_data.*.nextyear_01_plan' => 'nullable|numeric',
-                    'staff_data.*.nextyear_01_actual' => 'nullable|numeric',
-                    'staff_data.*.nextyear_02_plan' => 'nullable|numeric',
-                    'staff_data.*.nextyear_02_actual' => 'nullable|numeric',
-                    'staff_data.*.nextyear_03_plan' => 'nullable|numeric',
-                    'staff_data.*.nextyear_03_actual' => 'nullable|numeric',
+                    'projectData.id' => 'required|integer|exists:t_projects,id',
+                    'details' => 'required|array',
+                    'staff_data.*.planActualData.staff_id' => 'required|integer|exists:m_staffs_data,id',
+                    'staff_data.*.planActualData.this_year_04_plan' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_04_actual' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_05_plan' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_05_actual' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_06_plan' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_06_actual' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_07_plan' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_07_actual' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_08_plan' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_08_actual' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_09_plan' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_09_actual' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_10_plan' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_10_actual' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_11_plan' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_11_actual' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_12_plan' => 'nullable|numeric',
+                    'staff_data.*.planActualData.this_year_12_actual' => 'nullable|numeric',
+                    'staff_data.*.planActualData.nextyear_01_plan' => 'nullable|numeric',
+                    'staff_data.*.planActualData.nextyear_01_actual' => 'nullable|numeric',
+                    'staff_data.*.planActualData.nextyear_02_plan' => 'nullable|numeric',
+                    'staff_data.*.planActualData.nextyear_02_actual' => 'nullable|numeric',
+                    'staff_data.*.planActualData.nextyear_03_plan' => 'nullable|numeric',
+                    'staff_data.*.planActualData.nextyear_03_actual' => 'nullable|numeric',
                 ]);
 
-                foreach ($validatedData['staff_data'] as $staffData) {
-                    $staffId = $staffData['staff_id'];
+                foreach ($validatedData['details'] as $staffDataWrapper) {
+                    $planActualData = $staffDataWrapper['planActualData'];
+
+                    $staffId = $planActualData['staff_id'];
                     $dataToInsertOrUpdate = [
                         'staff_id' => $staffId,
-                        'project_id' => $validatedData['project_id'],
+                        'project_id' => $validatedData['projectData']['id'],
                         'updated_user' => Auth::user()->id,
                         'updated_datetime' => now(),
                     ];
 
                     $existingRecord = DB::table('t_project_actual')
-                        ->where('project_id', $validatedData['project_id'])
+                        ->where('project_id', $validatedData['projectData']['id'])
                         ->where('staff_id', $staffId)
                         ->first();
 
@@ -147,21 +147,34 @@ class T_project_Controller extends Controller
                         $dataToInsertOrUpdate['created_datetime'] = now();
                     }
 
-                    foreach ($staffData as $key => $value) {
-                        if (!is_null($value) && $key != 'staff_id') {
-                            $dataToInsertOrUpdate[$key] = $value;
+                    $defaultFields = [
+                        'this_year_04_plan', 'this_year_04_actual', 'this_year_05_plan', 'this_year_05_actual',
+                        'this_year_06_plan', 'this_year_06_actual', 'this_year_07_plan', 'this_year_07_actual',
+                        'this_year_09_plan', 'this_year_09_actual', 'this_year_08_plan', 'this_year_08_actual',
+                        'this_year_10_plan', 'this_year_10_actual', 'this_year_11_plan', 'this_year_11_actual',
+                        'this_year_12_plan', 'this_year_12_actual', 'nextyear_01_plan', 'nextyear_01_actual',
+                        'nextyear_02_plan', 'nextyear_02_actual',
+                        'nextyear_03_plan', 'nextyear_03_actual',
+                    ];
+                    foreach ($defaultFields as $field) {
+                        if (!isset($planActualData[$field])) {
+                            $dataToInsertOrUpdate[$field] = 0;
+                        } else {
+                            $dataToInsertOrUpdate[$field] = $planActualData[$field];
                         }
                     }
 
                     if ($existingRecord) {
                         DB::table('t_project_actual')
-                            ->where('project_id', $validatedData['project_id'])
+                            ->where('project_id', $validatedData['projectData']['id'])
                             ->where('staff_id', $staffId)
                             ->update($dataToInsertOrUpdate);
                     } else {
                         DB::table('t_project_actual')->insert($dataToInsertOrUpdate);
                     }
                 }
+
+
 
                 return response()->json(['message' => 'Data saved successfully']);
             } catch (\Exception $e) {
