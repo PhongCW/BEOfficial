@@ -195,7 +195,7 @@ class StaffController extends Controller
             if ($staff_type !== null){
                 $query->where("staff_type", "LIKE", "%$staff_type%");
             }
-            return $query->get();
+            return $query->orderBy("created_datetime", "DESC")->get();
         }
         else{
             return response()->json([
