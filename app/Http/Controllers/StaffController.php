@@ -181,68 +181,95 @@ class StaffController extends Controller
             "staff_type"=>"nullable|numeric"
         ]);
         $IDLoginUser = $request->IDLoginUser;
-        // $IDLoginUser = session("IDLoginUser");
+        $User = User::where("id", $IDLoginUser)->first();
+        if (isset($User)){
+            Auth::login($User);
+            $name = $request->input("name");
+            $staff_type = $request->input("staff_type");
 
-        $Del_flg = DB::table("m_staffs_data")->where("del_flg", 0)->exists();
+            $query = DB::table("m_staffs_data")->where("del_flg", 0);
 
-        if($Del_flg){
-                $User = User::where("id", $IDLoginUser)->first();
-                if(isset($User)){
-                    Auth::login($User);
-
-                    if ($request->name == null && $request->staff_type !== null){
-                        $FilterQueryNameNull = DB::table("m_staffs_data")->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
-                        return $FilterQueryNameNull;
-                    }
-                    if ($request->name !== null && $request->staff_type !== null){
-                        if ($request->name == substr($request->name, 0)){
-                            $queryLastName = DB::table("m_staffs_data")->where("last_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
-                            $queryFirstName = DB::table("m_staffs_data")->where("first_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
-                            $queryFullNamee = DB::table("m_staffs_data")->where(DB::raw("CONCAT(last_name, first_name)"), $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
-                            if (count($queryLastName)>0){
-                                return $queryLastName;
-                            }
-                            if (count($queryFirstName)>0){
-                                return $queryFirstName;
-                            }
-                            if (count($queryFullNamee)>0){
-                                return $queryFullNamee;
-                            }
-                        }
-                    }
-                    if ($request->name !== null && $request->staff_type == null){
-                        if ($request->name == substr($request->name, 0)){
-                            $queryLastName = DB::table("m_staffs_data")->where("last_name", $request->name)->where("del_flg", 0)->get();
-                            $queryFirstName = DB::table("m_staffs_data")->where("first_name", $request->name)->where("del_flg", 0)->get();
-                            $queryFullName = DB::table("m_staffs_data")->where(DB::raw("CONCAT(last_name, first_name)"), $request->name)->where("del_flg", 0)->get();
-                            if (count($queryLastName)>0){
-                                return $queryLastName;
-                            }
-                            if (count($queryFirstName)>0){
-                                return $queryFirstName;
-                            }
-                            if (count($queryFullName)>0){
-                                return $queryFullName;
-                            }
-                        }
-                        else{
-                            $FilterQueryStaffTypeNull = DB::table("m_staffs_data")->where(DB::raw("CONCAT(last_name, first_name)"), $request->name)->where("del_flg", 0)->get();
-                            return $FilterQueryStaffTypeNull;
-                        }
-                    }
-                    if ($request->name == null && $request->staff_type == null){
-                        $FillterQueryNull = DB::table("m_staffs_data")->where("del_flg", 0)->get();
-                        return $FillterQueryNull;
-                    }
-                }
-                else{
-                    return response()->json([
-                        "message"=>"You haven't login yet"
-                    ], 404);
-                }
+            if ($name !== null){
+                $query->where(DB::raw("CONCAT(last_name, first_name)"), "LIKE", "%$name%");
+            }
+            if ($staff_type !== null){
+                $query->where("staff_type", "LIKE", "%$staff_type%");
+            }
+            return $query->get();
         }
         else{
-            return $Del_flg;
+            return response()->json([
+                "message"=>"You haven't login yet"
+            ]);
         }
+        // $IDLoginUser = session("IDLoginUser");
+
+    //     $Del_flg = DB::table("m_staffs_data")->where("del_flg", 0)->exists();
+
+    //     if($Del_flg){
+    //             $User = User::where("id", $IDLoginUser)->first();
+    //             if(isset($User)){
+    //                 Auth::login($User);
+
+    //                 if ($request->name == null && $request->staff_type !== null){
+    //                     $FilterQueryNameNull = DB::table("m_staffs_data")->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
+    //                     return $FilterQueryNameNull;
+    //                 }
+    //                 if ($request->name !== null && $request->staff_type !== null){
+    //                     if ($request->name == substr($request->name, 0)){
+    //                         $queryLastName = DB::table("m_staffs_data")->where("last_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
+    //                         $queryFirstName = DB::table("m_staffs_data")->where("first_name", $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
+    //                         $queryFullNamee = DB::table("m_staffs_data")->where(DB::raw("CONCAT(last_name, first_name)"), $request->name)->where("staff_type", $request->staff_type)->where("del_flg", 0)->get();
+    //                         if (count($queryLastName)>0){
+    //                             return $queryLastName;
+    //                         }
+    //                         if (count($queryFirstName)>0){
+    //                             return $queryFirstName;
+    //                         }
+    //                         if (count($queryFullNamee)>0){
+    //                             return $queryFullNamee;
+    //                         }
+    //                         else{
+    //                             return [];
+    //                         }
+    //                     }
+    //                 }
+    //                 if ($request->name !== null && $request->staff_type == null){
+    //                     if ($request->name == substr($request->name, 0)){
+    //                         $queryLastName = DB::table("m_staffs_data")->where("last_name", $request->name)->where("del_flg", 0)->get();
+    //                         $queryFirstName = DB::table("m_staffs_data")->where("first_name", $request->name)->where("del_flg", 0)->get();
+    //                         $queryFullName = DB::table("m_staffs_data")->where(DB::raw("CONCAT(last_name, first_name)"), $request->name)->where("del_flg", 0)->get();
+    //                         if (count($queryLastName)>0){
+    //                             return $queryLastName;
+    //                         }
+    //                         if (count($queryFirstName)>0){
+    //                             return $queryFirstName;
+    //                         }
+    //                         if (count($queryFullName)>0){
+    //                             return $queryFullName;
+    //                         }
+    //                         else{
+    //                             return [];
+    //                         }
+    //                     }
+    //                     else{
+    //                         $FilterQueryStaffTypeNull = DB::table("m_staffs_data")->where(DB::raw("CONCAT(last_name, first_name)"), $request->name)->where("del_flg", 0)->get();
+    //                         return $FilterQueryStaffTypeNull;
+    //                     }
+    //                 }
+    //                 if ($request->name == null && $request->staff_type == null){
+    //                     $FillterQueryNull = DB::table("m_staffs_data")->where("del_flg", 0)->get();
+    //                     return $FillterQueryNull;
+    //                 }
+    //             }
+    //             else{
+    //                 return response()->json([
+    //                     "message"=>"You haven't login yet"
+    //                 ], 404);
+    //             }
+    //     }
+    //     else{
+    //         return $Del_flg;
+    //     }
     }
 }
