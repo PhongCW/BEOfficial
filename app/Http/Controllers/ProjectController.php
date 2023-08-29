@@ -20,8 +20,8 @@ class ProjectController extends Controller
     }
 
     function Delete_order(Request $request){
-        // $Id_User_Login = $request['IDLoginUser'];
-        $IDLoginUser = session("IDLoginUser");
+        $IDLoginUser = $request['IDLoginUser'];
+        // $IDLoginUser = session("IDLoginUser");
         $Id_Order = $request['Id_Order'];
         $User = User::where("id", $IDLoginUser)->first();
         if(isset($User)){
@@ -66,8 +66,8 @@ class ProjectController extends Controller
             'internal_unit_price.required' => 'internal unit price is required',
             'internal_unit_price.regex'    => 'internal unit price need to be numeric',
         ]);
-        // $IDLoginUser = $request->IDLoginUser;
-        $IDLoginUser = session("IDLoginUser");
+        $IDLoginUser = $request->IDLoginUser;
+        // $IDLoginUser = session("IDLoginUser");
         $User = User::where("id", $IDLoginUser)->first();
         if(isset($User)){
             Auth::login($User);
@@ -100,8 +100,8 @@ class ProjectController extends Controller
 
     function Get_Order_By_ID(Request $request){
         $data = $request;
-        // $IDLoginUser = $request->IDLoginUser;
-        $IDLoginUser = session("IDLoginUser");
+        $IDLoginUser = $request->IDLoginUser;
+        // $IDLoginUser = session("IDLoginUser");
         $User = User::where("id", $IDLoginUser)->first();
         Auth::login($User);
         if (isset($User)){
@@ -147,8 +147,8 @@ class ProjectController extends Controller
             return $validator->errors();
         }
         else{
-            // $IDLoginUser = $request->IDLoginUser;
-            $IDLoginUser = session("IDLoginUser");
+            $IDLoginUser = $request->IDLoginUser;
+            // $IDLoginUser = session("IDLoginUser");
             $User = User::where("id", $IDLoginUser)->first();
             if (isset($User)){
                 Auth::login($User);
@@ -180,8 +180,8 @@ class ProjectController extends Controller
             'client_name'  => 'nullable|string|max:255',
             'status'       => 'nullable|integer|between:0,4'
         ]);
-        // $IDLoginUser = $request->IDLoginUser;
-        $IDLoginUser = session("IDLoginUser");
+        $IDLoginUser = $request->IDLoginUser;
+        // $IDLoginUser = session("IDLoginUser");
         $User = User::where("id", $IDLoginUser)->first();
         if (isset($User)){
             Auth::login($User);

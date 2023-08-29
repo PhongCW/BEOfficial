@@ -20,8 +20,8 @@ class T_project_Controller extends Controller
     public function indexApi(Request $request)
     {
 
-            // $IDLoginUser = $request->IDLoginUser;
-            $IDLoginUser = session("IDLoginUser");
+            $IDLoginUser = $request->IDLoginUser;
+            // $IDLoginUser = session("IDLoginUser");
             $ID_Project = $request->selectedProjectId;
             $User = User::where("id", $IDLoginUser)->first();
 
@@ -93,8 +93,8 @@ class T_project_Controller extends Controller
 
     public function saveProjectPlanActuals(Request $request)
     {
-        // $IDLoginUser = $request->IDLoginUser;
-        $IDLoginUser = session("IDLoginUser");
+        $IDLoginUser = $request->IDLoginUser;
+        // $IDLoginUser = session("IDLoginUser");
         $User = User::where("id", $IDLoginUser)->first();
 
         if (isset($User)) {
