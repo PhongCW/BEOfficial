@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('project_name', 200)->nullable();
             $table->string('order_number', 100)->nullable(false);
             $table->string("client_name", 100)->nullable();
-            $table->dateTime("order_date")->nullable();
+            $table->date("order_date")->nullable();
             $table->tinyInteger("status")->nullable();
             $table->integer("order_income")->nullable();
             $table->integer("internal_unit_price")->nullable();

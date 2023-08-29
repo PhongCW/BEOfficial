@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 
 class ProjectController extends Controller
@@ -59,7 +60,7 @@ class ProjectController extends Controller
             'project_name.regex'    => 'Only input 2 byte character!',
             'order_number.required' => 'project name is required',
             'client_name.required'  => 'client name is required',
-            'order_date.date'       => 'order date need to be date',
+            'order_date.date' => 'order date need to be date',
             'status.required'       => 'status need is required',
             'order_income.required' => 'order income is required',
             'order_income.regex'    => 'order income need to be numeric',
@@ -123,7 +124,7 @@ class ProjectController extends Controller
             'project_name' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
             'order_number' => 'required|string|max:255',
             'client_name'  => 'required|string|max:255',
-            'order_date'   => 'required|date',
+            'order_date' => 'required|date',
             'status'       => 'required|integer|between:0,4',
             'order_income' => 'required|regex:/^[0-9]+$/',
             'internal_unit_price' => 'required|regex:/^[0-9]+$/',
@@ -134,7 +135,7 @@ class ProjectController extends Controller
             'project_name.regex'    => 'Only input 2 byte character!',
             'order_number.required' => 'order_number is required',
             'client_name.required'  => 'client_name is required',
-            'order_date.date'       => 'order_date need to be date',
+            'order_date.date'  => 'order_date need to be year, month and day',
             'status.required'       => 'status is required',
             'order_income.required' => 'order_income is required',
             'order_income.regex'    => 'order_income need to be numeric',

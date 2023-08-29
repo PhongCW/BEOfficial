@@ -46,7 +46,7 @@ class StaffController extends Controller
                 $Staff->update([
                     'del_flg' => 1,
                     'updated_user'=> Auth::user()->id,
-                    'updated_datetime'=> now()->setTimezone("Asia/Ho_Chi_Minh"),
+                    'updated_datetime'=> Carbon::now()->startOfDay()->format("Y/m/d"),
                 ]);
                 return "Deleted Successfully";
             }
@@ -105,9 +105,9 @@ class StaffController extends Controller
                 }
                 $StaffModel['del_flg'] = 0;
                 $StaffModel['created_user'] = Auth::user()->id;
-                $StaffModel['created_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
+                $StaffModel['created_datetime'] = Carbon::now()->startOfDay()->format("Y/m/d");
                 $StaffModel['updated_user'] = Auth::user()->id;
-                $StaffModel['updated_datetime'] = now()->setTimezone("Asia/Ho_Chi_Minh");
+                $StaffModel['updated_datetime'] = Carbon::now()->startOfDay()->format("Y/m/d");
 
                 $StaffModel -> save();
                 return "New Staff is created";
@@ -161,7 +161,7 @@ class StaffController extends Controller
                     'staff_type' => $staff_type,
                     'del_flg' => 0,
                     'updated_user' => Auth::user()->id,
-                    'updated_datetime' => now()->setTimezone("Asia/Ho_Chi_Minh"),
+                    'updated_datetime' => Carbon::now()->startOfDay()->format("Y/m/d"),
                 ]);
                 return response()->json([
                     "message"=>"Staff is edited"
