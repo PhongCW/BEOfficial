@@ -200,7 +200,7 @@ class StaffController extends Controller
         else{
             return response()->json([
                 "message"=>"You haven't login yet"
-            ]);
+            ], 404);
         }
         // $IDLoginUser = session("IDLoginUser");
 
