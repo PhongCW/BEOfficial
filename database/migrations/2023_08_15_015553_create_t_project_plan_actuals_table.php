@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('t_project_actual', function (Blueprint $table) {
-            $table->id()->nullable();
+        Schema::create('t_project_plan_actuals', function (Blueprint $table) {
+            $table->id()->nullable(false);
             $table->timestamps();
             $table->integer("project_id");
             $table->integer("staff_id");

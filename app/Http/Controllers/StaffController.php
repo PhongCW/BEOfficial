@@ -31,13 +31,14 @@ class StaffController extends Controller
     function Delete(Request $request){
         $SelectedStaff = $request;
         $SelectedStaffID = $SelectedStaff['id']; //here id staff
-        $ID_Login = $SelectedStaff['IDLoginUser']; //need IDlogin from user entered
+        // $ID_Login = $SelectedStaff['IDLoginUser']; //need IDlogin from user entered
         $SelectedStaff_Condition = $SelectedStaff['Condition']; // when click to verify, send true!
 
+        $IDLoginUser = session("IDLoginUser");
         $Staff = new Staff;
         $Staff = $Staff::where("id", $SelectedStaffID)->first();
 
-        $User = User::where("id", $ID_Login)->first();
+        $User = User::where("id", $IDLoginUser)->first();
         Auth::login($User);
 
         if(isset($User)){
@@ -58,7 +59,8 @@ class StaffController extends Controller
     }
     function Staff_Create(Request $request){
 
-        $IDLoginUser = $request->IDLoginUser;
+        // $IDLoginUser = $request->IDLoginUser;
+        $IDLoginUser = session("IDLoginUser");
         $User = User::where("id", $IDLoginUser)->first();
         if (isset($User)){
             Auth::login($User);
@@ -119,7 +121,8 @@ class StaffController extends Controller
 
     }
     function Staff_Detail_Edit(Request $request){
-        $IDLoginUser = $request->IDLoginUser;
+        // $IDLoginUser = $request->IDLoginUser;
+        $IDLoginUser = session("IDLoginUser");
         $User = User::where("id", $IDLoginUser)->first();
         if (isset($User)){
             Auth::login($User);
@@ -176,14 +179,9 @@ class StaffController extends Controller
         $Check = Validator::make($request->all(), [
             "name"=> 'nullable|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
             "staff_type"=>"nullable|numeric"
-        ], [
-            "name.regex"=>"Only input 2 byte character!"
         ]);
-        if ($Check->fails()){
-            return $Check->errors();
-        }
-        else{
-        $IDLoginUser = $request->IDLoginUser;
+        // $IDLoginUser = $request->IDLoginUser;
+        $IDLoginUser = session("IDLoginUser");
 
         $Del_flg = DB::table("m_staffs_data")->where("del_flg", 0)->exists();
 
@@ -210,6 +208,9 @@ class StaffController extends Controller
                             if (count($queryFullNamee)>0){
                                 return $queryFullNamee;
                             }
+                            else{
+                                return [];
+                            }
                         }
                     }
                     if ($request->name !== null && $request->staff_type == null){
@@ -225,6 +226,9 @@ class StaffController extends Controller
                             }
                             if (count($queryFullName)>0){
                                 return $queryFullName;
+                            }
+                            else{
+                                return [];
                             }
                         }
                         else{
@@ -246,7 +250,5 @@ class StaffController extends Controller
         else{
             return $Del_flg;
         }
-    }
-    
     }
 }

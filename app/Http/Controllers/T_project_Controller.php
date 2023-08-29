@@ -20,14 +20,15 @@ class T_project_Controller extends Controller
     public function indexApi(Request $request)
     {
 
-            $IDLoginUser = $request->IDLoginUser;
+            // $IDLoginUser = $request->IDLoginUser;
+            $IDLoginUser = session("IDLoginUser");
             $ID_Project = $request->selectedProjectId;
             $User = User::where("id", $IDLoginUser)->first();
 
             if (isset($User)){
                 // lấy project id ở bảng plan
                 Auth::login($User);
-                $projectInPlanActuals = DB::table('t_project_actual')
+                $projectInPlanActuals = DB::table('t_project_plan_actuals')
                 ->where('project_id', $ID_Project)
                 ->get();
 
@@ -90,8 +91,10 @@ class T_project_Controller extends Controller
         }
     }
 
-    public function saveProjectPlanActuals(Request $request){
-        $IDLoginUser = $request->IDLoginUser;
+    public function saveProjectPlanActuals(Request $request)
+    {
+        // $IDLoginUser = $request->IDLoginUser;
+        $IDLoginUser = session("IDLoginUser");
         $User = User::where("id", $IDLoginUser)->first();
 
         if (isset($User)) {
@@ -135,10 +138,11 @@ class T_project_Controller extends Controller
                         'staff_id' => $staffId,
                         'project_id' => $validatedData['projectData']['id'],
                         'updated_user' => Auth::user()->id,
+                        'del_flg'=>0,
                         'updated_datetime' => now(),
                     ];
 
-                    $existingRecord = DB::table('t_project_actual')
+                    $existingRecord = DB::table('t_project_plan_actuals')
                         ->where('project_id', $validatedData['projectData']['id'])
                         ->where('staff_id', $staffId)
                         ->first();
@@ -166,16 +170,14 @@ class T_project_Controller extends Controller
                     }
 
                     if ($existingRecord) {
-                        DB::table('t_project_actual')
+                        DB::table('t_project_plan_actuals')
                             ->where('project_id', $validatedData['projectData']['id'])
                             ->where('staff_id', $staffId)
                             ->update($dataToInsertOrUpdate);
                     } else {
-                        DB::table('t_project_actual')->insert($dataToInsertOrUpdate);
+                        DB::table('t_project_plan_actuals')->insert($dataToInsertOrUpdate);
                     }
                 }
-
-
 
                 return response()->json(['message' => 'Data saved successfully']);
             } catch (\Exception $e) {

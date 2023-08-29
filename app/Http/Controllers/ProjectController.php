@@ -20,9 +20,10 @@ class ProjectController extends Controller
     }
 
     function Delete_order(Request $request){
-        $Id_User_Login = $request['IDLoginUser'];
+        // $Id_User_Login = $request['IDLoginUser'];
+        $IDLoginUser = session("IDLoginUser");
         $Id_Order = $request['Id_Order'];
-        $User = User::where("id", $Id_User_Login)->first();
+        $User = User::where("id", $IDLoginUser)->first();
         if(isset($User)){
             Auth::login($User);
             $Project = Order::where("id", $Id_Order)->first();
@@ -65,7 +66,8 @@ class ProjectController extends Controller
             'internal_unit_price.required' => 'internal unit price is required',
             'internal_unit_price.regex'    => 'internal unit price need to be numeric',
         ]);
-        $IDLoginUser = $request->IDLoginUser;
+        // $IDLoginUser = $request->IDLoginUser;
+        $IDLoginUser = session("IDLoginUser");
         $User = User::where("id", $IDLoginUser)->first();
         if(isset($User)){
             Auth::login($User);
@@ -98,7 +100,8 @@ class ProjectController extends Controller
 
     function Get_Order_By_ID(Request $request){
         $data = $request;
-        $IDLoginUser = $request->IDLoginUser;
+        // $IDLoginUser = $request->IDLoginUser;
+        $IDLoginUser = session("IDLoginUser");
         $User = User::where("id", $IDLoginUser)->first();
         Auth::login($User);
         if (isset($User)){
@@ -144,7 +147,8 @@ class ProjectController extends Controller
             return $validator->errors();
         }
         else{
-            $IDLoginUser = $request->IDLoginUser;
+            // $IDLoginUser = $request->IDLoginUser;
+            $IDLoginUser = session("IDLoginUser");
             $User = User::where("id", $IDLoginUser)->first();
             if (isset($User)){
                 Auth::login($User);
@@ -175,14 +179,9 @@ class ProjectController extends Controller
             'project_name' => 'nullable|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
             'client_name'  => 'nullable|string|max:255',
             'status'       => 'nullable|integer|between:0,4'
-        ], [
-            "project_name.regex"=>"Only 2 byte Characters"
         ]);
-        if ($Check->fails()){
-            return $Check->errors();
-        }
-        else{
-        $IDLoginUser = $request->IDLoginUser;
+        // $IDLoginUser = $request->IDLoginUser;
+        $IDLoginUser = session("IDLoginUser");
         $User = User::where("id", $IDLoginUser)->first();
         if (isset($User)){
             Auth::login($User);
@@ -211,6 +210,9 @@ class ProjectController extends Controller
             if (isset($status)) {
                 $query->where('status', $status);
             }
+            else{
+                return [];
+            }
 
             $projects = $query->orderBy('order_number', 'ASC')->get();
 
@@ -220,7 +222,6 @@ class ProjectController extends Controller
             return response()->json([
                 "message"=>"You haven't login yet"
             ]);
-        }
         }
     }
 }

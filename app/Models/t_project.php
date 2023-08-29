@@ -17,7 +17,7 @@ class t_project extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $table = "t_project_actual";
+    protected $table = "t_project_plan_actuals";
     protected $fillable = [
         'id',
         'project_id',

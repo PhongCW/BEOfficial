@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('m_staffs_data', function (Blueprint $table) {
-            $table->integer("id")->nullable(false)->autoIncrement();
+        Schema::create('m_users_data', function (Blueprint $table) {
+            $table->integer("id")->autoIncrement()->nullable(false);
             $table->timestamps();
-            $table->string("last_name", 200)->nullable(false);
-            $table->string("first_name", 200)->nullable(false);
-            $table->string("last_name_furigana", 200)->nullable();
-            $table->string("first_name_furigana", 200)->nullable();
-            $table->tinyInteger("staff_type")->nullable(false);
+            $table->string("user_name", 100)->nullable(false);
+            $table->string("password", 100)->nullable(false);
+            $table->tinyInteger("role")->default(1)->nullable(false);
             $table->boolean("del_flg")->default(0)->nullable();
             $table->integer("created_user")->nullable();
             $table->dateTime("created_datetime")->nullable();
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('m_staffs_data');
+        Schema::dropIfExists('m_user_data');
     }
 };

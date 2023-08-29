@@ -41,6 +41,7 @@ class UserController extends Controller
                 if ($User['del_flg'] == 0){
                     if ($User && hash::check($PasswordLogin, $User->password)){
                         Auth::login($User);
+                        session()->put("IDLoginUser", Auth::user()->id);
                         return response()->json([
                             "message"=>"Successfully",
                             "IDLoginUser" => Auth::user()->id
