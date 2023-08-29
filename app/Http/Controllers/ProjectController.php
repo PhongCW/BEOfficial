@@ -211,10 +211,6 @@ class ProjectController extends Controller
                 $query->where('status', $status);
             }
 
-            if ($orderNumber == null && $projectName == null && $clientName == null && $status == null){
-                return [];
-            }
-
             $projects = $query->orderBy('order_number', 'DESC')->get();
 
             return $projects;

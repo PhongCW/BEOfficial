@@ -208,9 +208,6 @@ class StaffController extends Controller
                             if (count($queryFullNamee)>0){
                                 return $queryFullNamee;
                             }
-                            else{
-                                return [];
-                            }
                         }
                     }
                     if ($request->name !== null && $request->staff_type == null){
@@ -226,9 +223,6 @@ class StaffController extends Controller
                             }
                             if (count($queryFullName)>0){
                                 return $queryFullName;
-                            }
-                            else{
-                                return [];
                             }
                         }
                         else{
