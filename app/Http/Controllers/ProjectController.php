@@ -15,7 +15,7 @@ class ProjectController extends Controller
 {
     function Show_order_list(Request $request){
         $Project = new Order;
-        $Project = $Project::where("del_flg", 0)->orderBy("order_number")->get();
+        $Project = $Project::where("del_flg", 0)->orderBy("order_number")->orderBy("created_datetime", "DESC")->get();
         return $Project;    
     }
 
@@ -210,11 +210,12 @@ class ProjectController extends Controller
             if (isset($status)) {
                 $query->where('status', $status);
             }
-            else{
+
+            if ($orderNumber == null && $projectName == null && $clientName == null && $status == null){
                 return [];
             }
 
-            $projects = $query->orderBy('order_number', 'ASC')->get();
+            $projects = $query->orderBy('order_number', 'DESC')->get();
 
             return $projects;
         }

@@ -18,7 +18,7 @@ class StaffController extends Controller
 {
     function Show_Staff_Screen(Request $request){
         $Staff = new Staff;
-        $Staff = $Staff::where("del_flg", 0)->orderBy('created_datetime')->get();
+        $Staff = $Staff::where("del_flg", 0)->orderBy('created_datetime', 'DESC')->get();
         return $Staff;
     }
     function GetStaffById(Request $request){
@@ -133,13 +133,13 @@ class StaffController extends Controller
                 'first_name_furigana'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
             ],[
                 'last_name.required' => "Last name is required",
-                "last_name.regex"=> "Only input 2 byte character!",
+                "last_name.regex"=> "Only input 2 bytes character!",
                 'first_name.required' => "First name is required",
-                "first_name.regex"=>"Only input 2 byte character!",
+                "first_name.regex"=>"Only input 2 bytes character!",
                 'last_name_furigana.required'=> "Last name furigana is required",
-                "last_name_furigana.regex"=>"Only input 2 byte character!",
+                "last_name_furigana.regex"=>"Only input 2 bytes character!",
                 "first_name_furigana.required" => "first name furigana is required",
-                "first_name_furigana.regex"=>"Only input 2 byte character!",
+                "first_name_furigana.regex"=>"Only input 2 bytes character!",
             ]);
             if ($Staff_Edit->fails()){
                 return $Staff_Edit->errors();
