@@ -44,7 +44,8 @@ class UserController extends Controller
                         // session()->put("IDLoginUser", Auth::user()->id);
                         return response()->json([
                             "message"=>"Successfully",
-                            "IDLoginUser" => Auth::user()->id
+                            "IDLoginUser" => Auth::user()->id,
+                            "username" => $User['user_name']
                         ], 200);
                     }
                     else{
