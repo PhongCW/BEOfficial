@@ -11,8 +11,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use Psr\Http\Message\ResponseInterface;
-use SebastianBergmann\LinesOfCode\Counter;
 
 class StaffController extends Controller
 {
@@ -46,7 +44,7 @@ class StaffController extends Controller
                 $Staff->update([
                     'del_flg' => 1,
                     'updated_user'=> Auth::user()->id,
-                    'updated_datetime'=> Carbon::now()->startOfDay()->format("Y/m/d"),
+                    'updated_datetime'=> Carbon::now(),
                 ]);
                 return "Deleted Successfully";
             }
@@ -105,9 +103,9 @@ class StaffController extends Controller
                 }
                 $StaffModel['del_flg'] = 0;
                 $StaffModel['created_user'] = Auth::user()->id;
-                $StaffModel['created_datetime'] = Carbon::now()->startOfDay()->format("Y/m/d");
+                $StaffModel['created_datetime'] = Carbon::now();
                 $StaffModel['updated_user'] = Auth::user()->id;
-                $StaffModel['updated_datetime'] = Carbon::now()->startOfDay()->format("Y/m/d");
+                $StaffModel['updated_datetime'] = Carbon::now();
 
                 $StaffModel -> save();
                 return "New Staff is created";
@@ -187,7 +185,7 @@ class StaffController extends Controller
             $name = $request->input("name");
             $staff_type = $request->input("staff_type");
 
-            $query = DB::table("m_staffs_data")->where("del_flg", 0);
+            $query = DB::table("m_staff_datas")->where("del_flg", 0);
 
             if ($name !== null){
                 $query->where(DB::raw("CONCAT(last_name, first_name)"), "LIKE", "%$name%");
