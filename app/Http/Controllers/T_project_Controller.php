@@ -33,7 +33,7 @@ class T_project_Controller extends Controller
                 ->get();
 
         // lấy danh sách tất cả nhân viên từ m_detailss
-                $allStaffs = DB::table('m_staffs_data')
+                $allStaffs = DB::table('m_staff_datas')
                     ->select('id as staff_id', 'staff_type', DB::raw("CONCAT(last_name, ' ', first_name) AS full_name"))
                     ->get();
 
