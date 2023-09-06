@@ -52,7 +52,7 @@ class T_project_Controller extends Controller
                         'details' => []  // chi tiết về staff và dữ liệu t_project_plan_actuals
                     ];
 
-                    $planActualStaffIds = [];
+                    // $planActualStaffIds = [];
                     foreach ($projectInPlanActuals as $planActual) {
                         $planActualStaffIds[] = $planActual->staff_id;
 
@@ -66,22 +66,25 @@ class T_project_Controller extends Controller
                     }
 
                     // show danh sách staff chưa có trong bảng plant
-                    $remainingStaffIds = $allStaffs->pluck('staff_id')->diff($planActualStaffIds);
+                    // $remainingStaffIds = $allStaffs->pluck('staff_id')->diff($planActualStaffIds);
 
-                    $remainingStaffs = [];
-                    foreach ($remainingStaffIds as $remainingStaffId) {
-                        $staff = $allStaffs->firstWhere('staff_id', $remainingStaffId);
-                        if ($staff) {
-                            $remainingStaffs[] = $staff;  // thêm vào mảng riêng
-                        }
-                    }
+                    // $remainingStaffs = [];
+                    // foreach ($remainingStaffIds as $remainingStaffId) {
+                    //     $staff = $allStaffs->firstWhere('staff_id', $remainingStaffId);
+                    //     if ($staff) {
+                    //         $remainingStaffs[] = $staff;  // thêm vào mảng riêng
+                    //     }
+                    // }
 
-                    $results['remainingStaffs'] = $remainingStaffs;
+                    // $results['remainingStaffs'] = $remainingStaffs;
 
-                    return response()->json($results);
+                    return response()->json([
+                        "result"=>$results,
+                        "remainingStaffs"=>$allStaffs
+                    ]);
                 } 
                 else {
-                    return response()->json(['projectData' => $projectData, 'remainingStaffs' => $allStaffs]);
+                    return response()->json(['projectData' => $projectData, "remainingStaffs"=>$allStaffs]);
                 }
             }
             else{
