@@ -52,7 +52,7 @@ class T_project_Controller extends Controller
                         'details' => []  // chi tiết về staff và dữ liệu t_project_plan_actuals
                     ];
 
-                    $planActualStaffIds = [];
+                    // $planActualStaffIds = [];
                     foreach ($projectInPlanActuals as $planActual) {
                         $planActualStaffIds[] = $planActual->staff_id;
 
@@ -84,7 +84,7 @@ class T_project_Controller extends Controller
                     ]);
                 } 
                 else {
-                    return response()->json(['projectData' => $projectData, 'remainingStaffs' => $allStaffs]);
+                    return response()->json(['projectData' => $projectData, "remainingStaffs"=>$allStaffs]);
                 }
             }
             else{
