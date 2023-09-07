@@ -66,7 +66,8 @@ class T_project_Controller extends Controller
                     }
 
                     // show danh sách staff chưa có trong bảng plant
-                    // $remainingStaffIds = $allStaffs->pluck('staff_id')->diff($planActualStaffIds);
+                    $remainingStaffIds = $allStaffs;
+                    // ->pluck('staff_id')->diff($planActualStaffIds);
 
                     // $remainingStaffs = [];
                     // foreach ($remainingStaffIds as $remainingStaffId) {
@@ -76,12 +77,11 @@ class T_project_Controller extends Controller
                     //     }
                     // }
 
-                    // $results['remainingStaffs'] = $remainingStaffs;
+                    $results['remainingStaffs'] = $remainingStaffIds;
 
-                    return response()->json([
-                        "result"=>$results,
-                        "remainingStaffs"=>$allStaffs
-                    ]);
+                    return response()->json(
+                        $results
+                    );
                 } 
                 else {
                     return response()->json(['projectData' => $projectData, "remainingStaffs"=>$allStaffs]);
