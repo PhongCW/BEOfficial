@@ -48,7 +48,7 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'project_name' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
+            'project_name' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
             'order_number' => 'required|string|max:255',
             'client_name'  => 'required|string|max:255',
             'order_date'   => 'required|date',
@@ -121,7 +121,7 @@ class ProjectController extends Controller
     function Order_Edit_Detail(Request $request){
         $Order = new Order;
         $validator = Validator::make($request->all(), [
-            'project_name' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
+            'project_name' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
             'order_number' => 'required|string|max:255',
             'client_name'  => 'required|string|max:255',
             'order_date' => 'required|date',
@@ -177,7 +177,7 @@ class ProjectController extends Controller
 
         $Check = Validator::make($request->all(), [
             'order_number' => 'nullable|string|max:255',
-            'project_name' => 'nullable|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
+            'project_name' => 'nullable|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
             'client_name'  => 'nullable|string|max:255',
             'status'       => 'nullable|integer|between:0,4'
         ]);

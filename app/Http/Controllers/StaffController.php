@@ -65,10 +65,10 @@ class StaffController extends Controller
             $StaffTypeArray = [0, 1];
 
             $Staff_Create = Validator::make($request->all(), [
-                'last_name'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
-                'first_name'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
-                'last_name_furigana'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
-                'first_name_furigana'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
+                'last_name' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
+                'first_name' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
+                'last_name_furigana' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
+                'first_name_furigana' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
                 'staff_type'=>'required|string'
             ], [
                 'last_name.required' => "Last name is required",
@@ -125,10 +125,11 @@ class StaffController extends Controller
         if (isset($User)){
             Auth::login($User);
             $Staff_Edit = Validator::make($request->all(),[
-                'last_name'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
-                'first_name'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
-                'last_name_furigana'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
-                'first_name_furigana'=>'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
+                'last_name' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
+                'first_name' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
+                'last_name_furigana' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
+                'first_name_furigana' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
+
             ],[
                 'last_name.required' => "Last name is required",
                 "last_name.regex"=> "Only input 2 bytes character!",
@@ -175,7 +176,7 @@ class StaffController extends Controller
     function HandleSearchStaff(Request $request){
 
         $Check = Validator::make($request->all(), [
-            "name"=> 'nullable|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}]{0,255}$/u',
+            "name"=> 'nullable|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
             "staff_type"=>"nullable|numeric"
         ]);
         $IDLoginUser = $request->IDLoginUser;
