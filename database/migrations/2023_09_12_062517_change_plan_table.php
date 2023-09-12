@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('t_project_plan_actuals', function (Blueprint $table) {
+        Schema::table("t_project_plan_actuals", function(Blueprint $table){
             $table->float("this_year_04_plan")->change();
             $table->float("this_year_04_actual")->change();
             $table->float("this_year_05_plan")->change();
@@ -44,8 +44,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('table', function (Blueprint $table) {
-            //
-        });
+        //
     }
 };

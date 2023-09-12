@@ -57,16 +57,16 @@ class ProjectController extends Controller
             'internal_unit_price' => 'required|regex:/^[0-9]+$/',   // 1 byte
         ], [
             'project_name.required' => 'project name is required',
-            'project_name.regex'    => 'Only input 1 byte character!',
+            'project_name.regex'    => 'Only input 1 byte character!',// show new message
             'order_number.required' => 'project name is required',
             'client_name.required'  => 'client name is required',
-            'client_name.regex'=> "Only input 1 byte character!",
+            'client_name.regex'=> "Only input 1 byte character!", // show new message
             'order_date.date' => 'order date need to be date',
             'status.required'       => 'status need is required',
             'order_income.required' => 'order income is required',
-            'order_income.regex'    => 'order income need to be numeric and 1 byte character',
+            'order_income.regex'    => 'order income need to be numeric and 1 byte character', // show new message
             'internal_unit_price.required' => 'internal unit price is required',
-            'internal_unit_price.regex'    => 'internal unit price need to be numeric and 1 byte character',
+            'internal_unit_price.regex'    => 'internal unit price need to be numeric and 1 byte character', // show new message
         ]);
 
         if ($validator->fails()){
@@ -133,21 +133,21 @@ class ProjectController extends Controller
             'order_date' => 'required|date',
             'status'       => 'required|integer|between:0,4',
             'order_income' => 'required|regex:/^[0-9]+$/',      // 1byte
-            'internal_unit_price' => 'required|regex:/^[0-9]+$/', // 1byte
+            'internal_unit_price' => 'required|regex:/^[0-9]+$/', // 1byte 
             'OrderID' => 'required|numeric',
 
         ], [
             'project_name.required' => 'project_name is required',
-            'project_name.regex'    => 'Only input 1 byte character!',
+            'project_name.regex'    => 'Only input 1 byte character!',// show new message
             'order_number.required' => 'order_number is required',
             'client_name.required'  => 'client_name is required',
-            'client_name.regex' => 'Only input 1 byte character!',
+            'client_name.regex' => 'Only input 1 byte character!', // show new message
             'order_date.date'  => 'order_date need to be year, month and day',
             'status.required'       => 'status is required',
             'order_income.required' => 'order_income is required',
-            'order_income.regex'    => 'order_income need to be numeric and only 1 byte character',
+            'order_income.regex'    => 'order_income need to be numeric and only 1 byte character', // show new message
             'internal_unit_price.required' => 'internal_unit_price is required',
-            'internal_unit_price.regex'    => 'internal_unit_price need to be numeric and only 1 byte character',
+            'internal_unit_price.regex'    => 'internal_unit_price need to be numeric and only 1 byte character', // show new message
             'OrderID.required'=>"OrderID is required",
         ]);
         if ($validator->fails()){
