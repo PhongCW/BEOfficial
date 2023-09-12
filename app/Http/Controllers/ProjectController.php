@@ -47,26 +47,32 @@ class ProjectController extends Controller
     
     public function store(Request $request)
     {
-        $request->validate([
-            'project_name' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
+        $validator = Validator::make($request->all(), [
+            'project_name' => 'required|regex:/^[ -~]{0,255}$/',   // 1 byte
             'order_number' => 'required|string|max:255',
-            'client_name'  => 'required|string|max:255',
+            'client_name'  => 'required|regex:/^[ -~]{0,255}$/',    // 1 byte
             'order_date'   => 'required|date',
             'status'       => 'required|integer|between:0,4',
-            'order_income' => 'required|regex:/^[0-9]+$/',
-            'internal_unit_price' => 'required|regex:/^[0-9]+$/',
+            'order_income' => 'required|regex:/^[0-9]+$/',          // 1 byte
+            'internal_unit_price' => 'required|regex:/^[0-9]+$/',   // 1 byte
         ], [
             'project_name.required' => 'project name is required',
-            'project_name.regex'    => 'Only input 2 byte character!',
+            'project_name.regex'    => 'Only input 1 byte character!',
             'order_number.required' => 'project name is required',
             'client_name.required'  => 'client name is required',
+            'client_name.regex'=> "Only input 1 byte character!",
             'order_date.date' => 'order date need to be date',
             'status.required'       => 'status need is required',
             'order_income.required' => 'order income is required',
-            'order_income.regex'    => 'order income need to be numeric',
+            'order_income.regex'    => 'order income need to be numeric and 1 byte character',
             'internal_unit_price.required' => 'internal unit price is required',
-            'internal_unit_price.regex'    => 'internal unit price need to be numeric',
+            'internal_unit_price.regex'    => 'internal unit price need to be numeric and 1 byte character',
         ]);
+
+        if ($validator->fails()){
+            return $validator->errors();
+        }
+        
         $IDLoginUser = $request->IDLoginUser;
         // $IDLoginUser = session("IDLoginUser");
         $User = User::where("id", $IDLoginUser)->first();
@@ -121,28 +127,28 @@ class ProjectController extends Controller
     function Order_Edit_Detail(Request $request){
         $Order = new Order;
         $validator = Validator::make($request->all(), [
-            'project_name' => 'required|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
+            'project_name' => 'required|regex:/^[ -~]{0,255}$/', // 1byte
             'order_number' => 'required|string|max:255',
-            'client_name'  => 'required|string|max:255',
+            'client_name'  => 'required|regex:/^[ -~]{0,255}$/', // 1byte
             'order_date' => 'required|date',
             'status'       => 'required|integer|between:0,4',
-            'order_income' => 'required|regex:/^[0-9]+$/',
-            'internal_unit_price' => 'required|regex:/^[0-9]+$/',
+            'order_income' => 'required|regex:/^[0-9]+$/',      // 1byte
+            'internal_unit_price' => 'required|regex:/^[0-9]+$/', // 1byte
             'OrderID' => 'required|numeric',
 
         ], [
             'project_name.required' => 'project_name is required',
-            'project_name.regex'    => 'Only input 2 byte character!',
+            'project_name.regex'    => 'Only input 1 byte character!',
             'order_number.required' => 'order_number is required',
             'client_name.required'  => 'client_name is required',
+            'client_name.regex' => 'Only input 1 byte character!',
             'order_date.date'  => 'order_date need to be year, month and day',
             'status.required'       => 'status is required',
             'order_income.required' => 'order_income is required',
-            'order_income.regex'    => 'order_income need to be numeric',
+            'order_income.regex'    => 'order_income need to be numeric and only 1 byte character',
             'internal_unit_price.required' => 'internal_unit_price is required',
-            'internal_unit_price.regex'    => 'internal_unit_price need to be numeric',
+            'internal_unit_price.regex'    => 'internal_unit_price need to be numeric and only 1 byte character',
             'OrderID.required'=>"OrderID is required",
-
         ]);
         if ($validator->fails()){
             return $validator->errors();
@@ -167,7 +173,9 @@ class ProjectController extends Controller
                     'updated_user'=>Auth::user()->id,
                     'updated_datetime'=>now(),
                 ]);
-                return "Edited Project Successfully";
+                return response()->json([
+                    "message"=>"Edited Project Successfully"
+                ]);
             }
         }
     }
@@ -177,7 +185,7 @@ class ProjectController extends Controller
 
         $Check = Validator::make($request->all(), [
             'order_number' => 'nullable|string|max:255',
-            'project_name' => 'nullable|regex:/^[\p{Hiragana}\p{Katakana}\p{Han}０１２３４５６７８９]{0,255}$/u',
+            'project_name' => 'nullable|string|max:255',
             'client_name'  => 'nullable|string|max:255',
             'status'       => 'nullable|integer|between:0,4'
         ]);
