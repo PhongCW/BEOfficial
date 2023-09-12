@@ -64,9 +64,9 @@ class ProjectController extends Controller
             'order_date.date' => 'order date need to be date',
             'status.required'       => 'status need is required',
             'order_income.required' => 'order income is required',
-            'order_income.regex'    => 'order income need to be numeric and 1 byte character', // show new message
+            'order_income.regex'    => 'Only input 1 byte number', // show new message
             'internal_unit_price.required' => 'internal unit price is required',
-            'internal_unit_price.regex'    => 'internal unit price need to be numeric and 1 byte character', // show new message
+            'internal_unit_price.regex'    => 'Only input 1 byte number', // show new message
         ]);
 
         if ($validator->fails()){
@@ -145,9 +145,9 @@ class ProjectController extends Controller
             'order_date.date'  => 'order_date need to be year, month and day',
             'status.required'       => 'status is required',
             'order_income.required' => 'order_income is required',
-            'order_income.regex'    => 'order_income need to be numeric and only 1 byte character', // show new message
+            'order_income.regex'    => 'Only input 1 byte number', // show new message
             'internal_unit_price.required' => 'internal_unit_price is required',
-            'internal_unit_price.regex'    => 'internal_unit_price need to be numeric and only 1 byte character', // show new message
+            'internal_unit_price.regex'    => 'Only input 1 byte number', // show new message
             'OrderID.required'=>"OrderID is required",
         ]);
         if ($validator->fails()){
